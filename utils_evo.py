@@ -65,7 +65,7 @@ class SlicedBands:
 
 
 class EvoSearch:
-    def __init__(self, material, k_indices, ks_indices, eigen_solver, real_bands, real_spins, bounds=None, bands='all', compostition_loss=None,
+    def __init__(self, material, k_indices, ks_indices, eigen_solver, real_bands, real_spins, bounds=None, bands='all', compostition_loss=None, inter_intra_ratio_bounds=None,
                  strategy='best1bin', pop_size=None, tol=0.01, mutation=None, recombination=None, max_iter=1000,
                  workers=-1, disp=True, no_params=10, results_path="results.txt", plots_path="plots", metrics=None):
         self.material = material
@@ -77,6 +77,7 @@ class EvoSearch:
         self.bounds = bounds
         self.bands = bands
         self.compostition_loss = compostition_loss
+        self.inter_intra_ratio_bounds = inter_intra_ratio_bounds
         self.strategy = strategy
         self.pop_size = pop_size
         self.tol = tol
@@ -98,49 +99,50 @@ class EvoSearch:
             print("no bounds specified")
             return
         for s in self.strategy:
-            for b in self.bounds:
-                bounds = [(-b/10., b/10.) for _ in range(self.no_params[0])] + [(-b, b) for _ in range(self.no_params[1])]
-                for p in self.pop_size:
-                    for m in self.mutation:
-                        for r in self.recombination:
-                            for bands in self.bands:
-                                for c in self.compostition_loss:
-                                    for metric in self.metrics:
-                                        self.material.update_parameters(*np.concatenate([uniform(-b/10., b/10., self.no_params[0]),uniform(-b, b, self.no_params[1])]))
-                                        name = f"ek_target_evo_{s}_{p}_{m}_{r}_bands_{bands}_bound_{b}_comp_{c}_metric_{metric}"
-                                        if name not in self.already_searched:
-                                            print(f"searching for: {name}")
-                                            output = self.evo(
-                                                bounds=bounds,
-                                                strategy=s,
-                                                pop_size=p,
-                                                tol=self.tol,
-                                                mutation=m,
-                                                recombination=r,
-                                                bands=bands,
-                                                compostition_loss=c,
-                                                metric=metric,
-                                            )
-                                            self.material.update_parameters(*output.x)
-                                            fitted_bands, fitted_spins, _  = self.eigen_solver.solve_BZ_path(get_spin=True)
-                                            tb_params_str = ", ".join(str(p) for p in output.x)
-                                            sliced_real_bands, sliced_predicted_bands = SlicedBands(
-                                                real_bands=self.real_bands,
-                                                predicted_bands=fitted_bands,
-                                                bands=b,
-                                            ).get_sliced_bands().get_bands()
-                                            result = {
-                                                "name": name,
-                                                "rmse": self._calculate_rmse(self.real_bands, fitted_bands),
-                                                "fit_rmse": self._calculate_rmse(sliced_real_bands, sliced_predicted_bands),
-                                                "tb_params": f"[{tb_params_str}]",
-                                            }
-                                            self._append_result_to_file(result)
-                                            #self.plotting.plot_Ek_output_target(self.real_bands, fitted_bands, name)
-                                            real_spins = np.ones_like(fitted_spins)
-                                            self.plotting.plot_Ek_output_target_s([self.real_bands, real_spins], [fitted_bands, fitted_spins], name)
-                                        else:
-                                            print(f'skipped search for: {name}')
+            for rb in self.inter_intra_ratio_bounds:
+                for b in self.bounds:
+                    bounds = [(-b*rb, b*rb) for _ in range(self.no_params[0])] + [(-b, b) for _ in range(self.no_params[1])]
+                    for p in self.pop_size:
+                        for m in self.mutation:
+                            for r in self.recombination:
+                                for bands in self.bands:
+                                    for c in self.compostition_loss:
+                                        for metric in self.metrics:
+                                            self.material.update_parameters(*np.concatenate([uniform(-b*rb, b*rb, self.no_params[0]),uniform(-b, b, self.no_params[1])]))
+                                            name = f"ek_target_evo_{s}_{p}_{m}_{r}_bands_{bands}_bound_{b}_ratio_bound_{rb}_comp_{c}_metric_{metric}"
+                                            if name not in self.already_searched:
+                                                print(f"searching for: {name}")
+                                                output = self.evo(
+                                                    bounds=bounds,
+                                                    strategy=s,
+                                                    pop_size=p,
+                                                    tol=self.tol,
+                                                    mutation=m,
+                                                    recombination=r,
+                                                    bands=bands,
+                                                    compostition_loss=c,
+                                                    metric=metric,
+                                                )
+                                                self.material.update_parameters(*output.x)
+                                                fitted_bands, fitted_spins, _  = self.eigen_solver.solve_BZ_path(get_spin=True)
+                                                tb_params_str = ", ".join(str(p) for p in output.x)
+                                                sliced_real_bands, sliced_predicted_bands = SlicedBands(
+                                                    real_bands=self.real_bands,
+                                                    predicted_bands=fitted_bands,
+                                                    bands=b,
+                                                ).get_sliced_bands().get_bands()
+                                                result = {
+                                                    "name": name,
+                                                    "rmse": self._calculate_rmse(self.real_bands, fitted_bands),
+                                                    "fit_rmse": self._calculate_rmse(sliced_real_bands, sliced_predicted_bands),
+                                                    "tb_params": f"[{tb_params_str}]",
+                                                }
+                                                self._append_result_to_file(result)
+                                                #self.plotting.plot_Ek_output_target(self.real_bands, fitted_bands, name)
+                                                real_spins = np.ones_like(fitted_spins)
+                                                self.plotting.plot_Ek_output_target_s([self.real_bands, real_spins], [fitted_bands, fitted_spins], name)
+                                            else:
+                                                print(f'skipped search for: {name}')
         self._close_results_file()
 
     def evo(self, bounds, strategy, pop_size, tol, mutation, recombination, bands="valence", compostition_loss=.5, metric="mae"):

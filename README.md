@@ -1,8 +1,8 @@
 # TBGA fitting
 
-tight binding models fitting using evolutionary optimization
+## Tight binding models fitting using evolutionary optimization
 
-to start fitting just run
+- to start fitting just run:
 ```
 python evo_search.py
 ```
