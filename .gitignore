@@ -1,0 +1,12 @@
+__pycache__/
+.DS_Store
+.idea/
+venv/
+old/
+outputs/
+*.png
+__init__.py
+results*
+plots/
+test_plots/
+tags/
