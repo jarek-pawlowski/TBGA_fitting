@@ -44,6 +44,10 @@ class SlicedBands:
             self.real_bands = self.real_bands[:, 11:15]
             self.predicted_bands = self.predicted_bands[:, 17:21]
             return self
+        if self.bands == "coductance_reduced":
+            self.real_bands = self.real_bands[:, 11:13]
+            self.predicted_bands = self.predicted_bands[:, 17:19]
+            return self
         if self.bands == "coductance_and_valence":
             self.real_bands = self.real_bands[:, 7:15]
             self.predicted_bands = self.predicted_bands[:, 13:21]

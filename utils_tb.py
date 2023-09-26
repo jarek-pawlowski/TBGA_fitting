@@ -303,6 +303,7 @@ class Lattice:
         d = distance 
         self.k_indices = [0,41,51,61,71,81,91,96,101,111]  # G = 0, M = 41, K = 61, Q = 96, G = 130
         self.ks_indices = [61,80,96]
+        self.ks_indices = [61,71,80,91,96]        
         self.critical_points_indices = [(r'$\Gamma$', 0), ('Q', 96), ('K', 61), ('M', 41), (r'$\Gamma$', 130)]
 
 class BandModel:
@@ -870,6 +871,54 @@ class Plotting:
         filename = f'{plot_name}.png'
         plt.savefig(os.path.join(self.directory, "plots", filename), bbox_inches='tight', dpi=400)
         plt.close()
+        
+    
+    def plot_Ek_output_target_ss(self, target, output, plot_name):
+        """ Plots dispersion relations for
+        two given lists of bands.
+
+        Parameters
+        ----------
+        Ek_. : List[array]
+            List of arrays of eigenvalues
+        x_label : string
+            label of x-axis
+        y_label : string
+            label of y-axis
+        """
+        pointsize = .5
+        fig, ax = plt.subplots(figsize=(8, 6))
+        ax.axes.set_aspect(.2)
+        ax.set_xlabel('k (nm$^{-1}$)')
+        ax.set_ylabel('E (eV)')
+        ax.set_ylim([-2,2.])
+
+        k_path = np.linspace(0., 1., num=self.grid_k.shape[0])
+        # plot dispersion relation
+        Ek_target = np.array(target[0])
+        spin_target = np.array(target[1])
+        
+        for band_idx in range(Ek_target.shape[1]):
+            ax.scatter(k_path, Ek_target[:,band_idx], s=pointsize, marker='.', c='k', cmap='bwr',label='Target band')
+            for out in output:
+                Ek_output = np.array(out[0])
+                spin_output = np.array(out[1])
+                ax.scatter(k_path, Ek_output[:,band_idx], s=pointsize, marker='.', c=spin_output[:,band_idx], cmap='bwr', label='Fitted band')
+
+        handles, labels = plt.gca().get_legend_handles_labels()
+        by_label = dict(zip(labels, handles))
+        ax.legend(by_label.values(), by_label.keys(), loc='upper right')
+
+        text_shift_x = (ax.get_xlim()[1] - ax.get_xlim()[0])*0.01
+        plot_max_y = ax.get_ylim()[1]
+
+        for (name, position_index) in self.critical_points_indices:
+             position_k=k_path[position_index]
+             ax.annotate(name, xy=(position_k-text_shift_x, plot_max_y), xytext=(position_k-text_shift_x, plot_max_y + 0.1))
+             ax.axvline(x=position_k, linestyle='--', color='black')
+        filename = f'{plot_name}.png'
+        plt.savefig(os.path.join(self.directory, "plots", filename), bbox_inches='tight', dpi=400)
+        plt.close()    
         
     def plot_Ek_output_target0(self, Ek_target, Ek_output1, Ek_output2, Ek_output3):
         """ Plots dispersion relations for
