@@ -140,129 +140,9 @@ class TMDCmaterial3:
         self.lso = lso
 
 
-class Newmaterial:
-    
-    def __init__(self, lattice_const,
-                 Ed_up,Ep1_up,Ep0_up,Vdp_sigma_up,Vdp_pi_up,Vdd_sigma_up,Vdd_pi_up,Vdd_delta_up,Vpp_sigma_up,Vpp_pi_up,Ep1_odd_up,Ep0_odd_up,Ed_odd_up,lambda_M_up,lambda_X2_up,
-                 Ed_down,Ep1_down,Ep0_down,Vdp_sigma_down,Vdp_pi_down,Vdd_sigma_down,Vdd_pi_down,Vdd_delta_down,Vpp_sigma_down,Vpp_pi_down,Ep1_odd_down,Ep0_odd_down,Ed_odd_down,lambda_M_down,lambda_X2_down,
-                 Vpp_sigma_inter,Vpp_pi_inter,Vdd_sigma_inter,Vdd_pi_inter,Vdd_delta_inter,offset):
-        self.dim = 44
-        self.lattice_const = lattice_const
-        self.a0 = self.lattice_const
-        #
-        self.Ed_up = Ed_up
-        self.Ep1_up = Ep1_up
-        self.Ep0_up = Ep0_up
-        self.Vdp_sigma_up = Vdp_sigma_up
-        self.Vdp_pi_up = Vdp_pi_up
-        self.Vdd_sigma_up = Vdd_sigma_up
-        self.Vdd_pi_up = Vdd_pi_up
-        self.Vdd_delta_up = Vdd_delta_up
-        self.Vpp_sigma_up = Vpp_sigma_up
-        self.Vpp_pi_up = Vpp_pi_up
-        self.Ep1_odd_up = Ep1_odd_up
-        self.Ep0_odd_up = Ep0_odd_up
-        self.Ed_odd_up = Ed_odd_up
-        
-        self.Ed_up_0 = self.Ed_up
-        self.Ep1_up_0 = self.Ep1_up
-        self.Ep0_up_0 = self.Ep0_up
-        self.Vdp_sigma_up_0 = self.Vdp_sigma_up
-        self.Vdp_pi_up_0 = self.Vdp_pi_up
-        self.Vdd_sigma_up_0 = self.Vdd_sigma_up
-        self.Vdd_pi_up_0 = self.Vdd_pi_up
-        self.Vdd_delta_up_0 = self.Vdd_delta_up
-        self.Vpp_sigma_up_0 = self.Vpp_sigma_up
-        self.Vpp_pi_up_0 = self.Vpp_pi_up
-        self.Ep1_odd_up_0 = self.Ep1_odd_up
-        self.Ep0_odd_up_0 = self.Ep0_odd_up
-        self.Ed_odd_up_0 = self.Ed_odd_up
-        #
-        self.lambda_M_up = lambda_M_up
-        self.lambda_X2_up = lambda_X2_up
-        #
-        self.Ed_down = Ed_down
-        self.Ep1_down = Ep1_down
-        self.Ep0_down = Ep0_down
-        self.Vdp_sigma_down = Vdp_sigma_down
-        self.Vdp_pi_down = Vdp_pi_down
-        self.Vdd_sigma_down = Vdd_sigma_down
-        self.Vdd_pi_down = Vdd_pi_down
-        self.Vdd_delta_down = Vdd_delta_down
-        self.Vpp_sigma_down = Vpp_sigma_down
-        self.Vpp_pi_down = Vpp_pi_down
-        self.Ep1_odd_down = Ep1_odd_down
-        self.Ep0_odd_down = Ep0_odd_down
-        self.Ed_odd_down = Ed_odd_down
-        
-        self.Ed_down_0 = Ed_down
-        self.Ep1_down_0 = self.Ep1_down
-        self.Ep0_down_0 = self.Ep0_down
-        self.Vdp_sigma_down_0 = self.Vdp_sigma_down
-        self.Vdp_pi_down_0 = self.Vdp_pi_down
-        self.Vdd_sigma_down_0 = self.Vdd_sigma_down
-        self.Vdd_pi_down_0 = self.Vdd_pi_down
-        self.Vdd_delta_down_0 = self.Vdd_delta_down
-        self.Vpp_sigma_down_0 = self.Vpp_sigma_down
-        self.Vpp_pi_down_0 = self.Vpp_pi_down
-        self.Ep1_odd_down_0 = self.Ep1_odd_down
-        self.Ep0_odd_down_0 = self.Ep0_odd_down
-        self.Ed_odd_down_0 = self.Ed_odd_down
-        #
-        self.lambda_M_down = lambda_M_down
-        self.lambda_X2_down = lambda_X2_down
-        #
-        self.Vpp_sigma_inter = Vpp_sigma_inter
-        self.Vpp_pi_inter = Vpp_pi_inter
-        self.Vdd_sigma_inter = Vdd_sigma_inter
-        self.Vdd_pi_inter = Vdd_pi_inter
-        self.Vdd_delta_inter = Vdd_delta_inter
-        self.offset = offset
-            
-    def update_parameters(self, 
-                          Ed_up,Ep1_up,Ep0_up,Vdp_sigma_up,Vdp_pi_up,Vdd_sigma_up,Vdd_pi_up,Vdd_delta_up,Vpp_sigma_up,Vpp_pi_up,Ep1_odd_up,Ep0_odd_up,Ed_odd_up,
-                          Ed_down,Ep1_down,Ep0_down,Vdp_sigma_down,Vdp_pi_down,Vdd_sigma_down,Vdd_pi_down,Vdd_delta_down,Vpp_sigma_down,Vpp_pi_down,Ep1_odd_down,Ep0_odd_down,Ed_odd_down,
-                          Vpp_sigma_inter, Vpp_pi_inter, Vdd_sigma_inter, Vdd_pi_inter, Vdd_delta_inter, offset):
-        
-        self.Ed_up = self.Ed_up_0 + Ed_up
-        self.Ep1_up = self.Ep1_up_0 + Ep1_up
-        self.Ep0_up = self.Ep0_up_0 + Ep0_up
-        self.Vdp_sigma_up = self.Vdp_sigma_up_0 + Vdp_sigma_up
-        self.Vdp_pi_up = self.Vdp_pi_up_0 + Vdp_pi_up
-        self.Vdd_sigma_up = self.Vdd_sigma_up_0 + Vdd_sigma_up
-        self.Vdd_pi_up = self.Vdd_pi_up_0 + Vdd_pi_up
-        self.Vdd_delta_up = self.Vdd_delta_up_0 + Vdd_delta_up
-        self.Vpp_sigma_up = self.Vpp_sigma_up_0 + Vpp_sigma_up
-        self.Vpp_pi_up = self.Vpp_pi_up_0 + Vpp_pi_up
-        self.Ep1_odd_up = self.Ep1_odd_up_0 + Ep1_odd_up
-        self.Ep0_odd_up = self.Ep0_odd_up_0 + Ep0_odd_up
-        self.Ed_odd_up = self.Ed_odd_up_0 + Ed_odd_up
-        
-        self.Ed_down = self.Ed_down_0 + Ed_down
-        self.Ep1_down = self.Ep1_down_0 + Ep1_down
-        self.Ep0_down = self.Ep0_down_0 + Ep0_down
-        self.Vdp_sigma_down = self.Vdp_sigma_down_0 + Vdp_sigma_down
-        self.Vdp_pi_down = self.Vdp_pi_down_0 + Vdp_pi_down
-        self.Vdd_sigma_down = self.Vdd_sigma_down_0 + Vdd_sigma_down
-        self.Vdd_pi_down = self.Vdd_pi_down_0 + Vdd_pi_down
-        self.Vdd_delta_down = self.Vdd_delta_down_0 + Vdd_delta_down
-        self.Vpp_sigma_down = self.Vpp_sigma_down_0 + Vpp_sigma_down
-        self.Vpp_pi_down = self.Vpp_pi_down_0 + Vpp_pi_down
-        self.Ep1_odd_down = self.Ep1_odd_down_0 + Ep1_odd_down
-        self.Ep0_odd_down = self.Ep0_odd_down_0 + Ep0_odd_down
-        self.Ed_odd_down = self.Ed_odd_down_0 + Ed_odd_down
-        
-        self.Vpp_sigma_inter = Vpp_sigma_inter
-        self.Vpp_pi_inter = Vpp_pi_inter
-        self.Vdd_sigma_inter = Vdd_sigma_inter
-        self.Vdd_pi_inter = Vdd_pi_inter
-        self.Vdd_delta_inter = Vdd_delta_inter
-        self.offset = offset
-        
-
 class Lattice:
 
-    def __init__(self, BZ_path=None):
+    def __init__(self):
         lattice_vectors = np.array([[1.,0.], [-.5, np.sqrt(3.)/2.]])
         #self.K_points = [np.array([np.pi*4./3., 0.]), np.array([np.pi*4./6., np.pi*2./np.sqrt(3.)])]
         self.K_points = [np.array([np.pi*4./3.,np.pi*4./np.sqrt(3.)]), np.array([np.pi*2./3,np.pi*2./np.sqrt(3.)])]
@@ -282,29 +162,24 @@ class Lattice:
         K = self.K_points[0][0]
         M = K*3./2
         G = K*np.sqrt(3.)/2.
-        dk = (M+G)/131.  # magic number to get exactly 131 points at the path
+        dk = (M+G)/120.  # magic number to get exactly 120 points at the path
         self.critical_points = [(r'$\Gamma$', 0.), ('K', K), ('M', M), (r'$\Gamma$', M+G)]
         self.critical_points_w_names = {"gamma_1": 0., "K": K, "M": M, "gamma_2": M+G}
         k_GK = [[x, 0.] for x in np.arange(0, K, dk)] # k varying from Gamma to K point within the BZ
         k_KM = [[x, 0.] for x in np.arange(K, M, dk)] # k varying from K to M point within the BZ
         k_MG = [[M, y]  for y in np.linspace(0, G, num=int(G/dk), endpoint=True)] # k varying from M to Gamma point within the BZ
-        if BZ_path is not None:
-            self.BZ_path = BZ_path
-            self.BZ_loaded_externally = True
-        else:
-            self.BZ_path = np.concatenate((k_GK, k_KM, k_MG)) # full path within the BZ
-            self.BZ_loaded_externally = False
+        self.BZ_path = np.concatenate((k_GK, k_KM, k_MG)) # full path within the BZ
+        self.k_points = None
     
     def select_k_indices(self, distance=5):
         """ 
         select points along BZ path:
+        [G,Q,K-2d,K-d,K,K+d,K+2d,M]
         with neighbor points taken at some distance
         """
-        d = distance 
-        self.k_indices = [0,41,51,61,71,81,91,96,101,111]  # G = 0, M = 41, K = 61, Q = 96, G = 130
-        self.ks_indices = [61,80,96]
-        self.ks_indices = [61,71,80,91,96]        
-        self.critical_points_indices = [(r'$\Gamma$', 0), ('Q', 96), ('K', 61), ('M', 41), (r'$\Gamma$', 130)]
+        d = distance
+        self.k_indices = [0,25,51-d*4,51-d*3,51-d*2,51-d,51,51+d,51+d*2,51+d*3,51+d*4,77]  # G = 0, Q = 25, K = 51, M = 77 
+        self.ks_indices = [51-d,51+d]
 
 class BandModel:
 
@@ -313,19 +188,15 @@ class BandModel:
         self.l = lattice
         self.hoppingsMM = [h*self.m.a0/np.sqrt(3.) for h in self.l.hoppingsMM]
         self.hoppingsMX = [h*self.m.a0/np.sqrt(3.) for h in self.l.hoppingsMX]
-        if self.l.BZ_loaded_externally:
-            self.BZ_path = self.l.BZ_path
-        else:
-            self.BZ_path = self.l.BZ_path/self.m.a0
+        self.BZ_path = self.l.BZ_path/self.m.a0
         self.critical_points = [(p[0], p[1]/self.m.a0) for p in self.l.critical_points]
         self.K_points = [p/self.m.a0 for p in self.l.K_points]
-        self.critical_points_indices = self.l.critical_points_indices
 
     def hopping_matrix_(self, x, y, x1, y1, linkstype):
         """
         create 6x6 hopping matrix that represents hopping integral within the tight-binding model
 
-        orbitals basis = {Dm2, , Dp2, PEm1, PE0, PEp1}
+        orbitals basis = {Dm2, D0, Dp2, PEm1, PE0, PEp1}
 
         """
         m = self.m
@@ -456,241 +327,7 @@ class BandModel:
         for h in self.hoppingsMM:
             hh_m += self.hopping_matrix_6(0., 0., h[0], h[1], self.m)*np.exp(1.j*(kx*h[0]+ky*h[1]))   
         return hh_m
-
-    def build_tb_hamiltonian_new(self, kx, ky):
-        # Geometry Parameters (lattice constanst for MoSe2) -------
-        d1            = self.m.lattice_const/np.sqrt(3.0) 
-        d2_up         = 1.669
-        d2_down       = 1.680
-        d_up          = np.sqrt(d1**2.0+d2_up**2.0) 
-        d_down        = np.sqrt(d1**2.0+d2_down**2.0) 
-        layer_dist    = 6.4 
-        dz_pp         = layer_dist - d2_up - d2_down
-        d_pp          = np.sqrt( (self.m.lattice_const**2.0 / 3.0) + (dz_pp**2.0) ) 
-        dz_dd         = layer_dist
-        d_dd          = np.sqrt( (self.m.lattice_const**2.0 / 3.0) + (dz_dd**2.0) ) 
-        R1x_pp        = -d1/2.0 
-        R1y_pp        = d1*np.sqrt(3.0)/2.0 
-        R2x_pp        = -d1/2.0  
-        R2y_pp        = -d1*np.sqrt(3.0)/2.0 
-        R3x_pp        = d1
-        R3y_pp        = 0.0 
-        R1x_dd        = d1/2.0 
-        R1y_dd        = d1*np.sqrt(3.0)/2.0 
-        R2x_dd        = d1/2.0  
-        R2y_dd        = -d1*np.sqrt(3.0)/2.0 
-        R3x_dd        = -d1
-        R3y_dd        = 0.0 
-        #
-        H_k = np.zeros((self.m.dim+1, self.m.dim+1), dtype=np.complex128)
-        # --- Constructing the Hamiltonian ---
-        g0        =  4.0*np.cos(3.0/2.0*kx*d1)*np.cos(np.sqrt(3.0)/2.0*ky*d1) + 2.0*np.cos(np.sqrt(3.0)*ky*d1) 
-        g2        =  2.0*np.cos(3.0/2.0*kx*d1+np.sqrt(3.0)/2.0*ky*d1)*np.exp(1.j*np.pi/3.0) + 2.0*np.cos(3.0/2.0*kx*d1-np.sqrt(3.0)/2.0*ky*d1)*np.exp(-1.j*np.pi/3.0) - 2.0*np.cos(np.sqrt(3.0)*ky*d1) 
-        g4        =  2.0*np.cos(3.0/2.0*kx*d1+np.sqrt(3.0)/2.0*ky*d1)*np.exp(1.j*2.0*np.pi/3.0) + 2.0*np.cos(3.0/2.0*kx*d1-np.sqrt(3.0)/2.0*ky*d1)*np.exp(-1.j*2.0*np.pi/3.0) + 2.0*np.cos(np.sqrt(3.0)*ky*d1) 
-        f_m1_up   = np.exp(-1.j*kx*d1) + np.exp(1.j*kx*d1/2.0)*np.exp(1.j*np.sqrt(3.0)*ky*d1/2.0)*np.exp(-1.j*2.0*np.pi/3.0) + np.exp(1.j*kx*d1/2.0)*np.exp(-1.j*np.sqrt(3.0)*ky*d1/2.0)*np.exp(1.j*2.0*np.pi/3.0) 
-        f_0_up    = np.exp(-1.j*kx*d1) + np.exp(1.j*kx*d1/2.0)*np.exp(1.j*np.sqrt(3.0)*ky*d1/2.0)*np.exp(1.j*2.0*np.pi/3.0) + np.exp(1.j*kx*d1/2.0)*np.exp(-1.j*np.sqrt(3.0)*ky*d1/2.0)*np.exp(-1.j*2.0*np.pi/3.0) 
-        f_p1_up   = np.exp(-1.j*kx*d1) + np.exp(1.j*kx*d1/2.0)*np.exp(1.j*np.sqrt(3.0)*ky*d1/2.0) + np.exp(1.j*kx*d1/2.0)*np.exp(-1.j*np.sqrt(3.0)*ky*d1/2.0) 
-        f_m1_down = np.exp(1.j*kx*d1) + np.exp(-1.j*kx*d1/2.0)*np.exp(1.j*np.sqrt(3.0)*ky*d1/2.0)*np.exp(1.j*2.0*np.pi/3.0) + np.exp(-1.j*kx*d1/2.0)*np.exp(-1.j*np.sqrt(3.0)*ky*d1/2.0)*np.exp(-1.j*2.0*np.pi/3.0) 
-        f_0_down  = np.exp(1.j*kx*d1) + np.exp(-1.j*kx*d1/2.0)*np.exp(1.j*np.sqrt(3.0)*ky*d1/2.0)*np.exp(-1.j*2.0*np.pi/3.0) + np.exp(-1.j*kx*d1/2.0)*np.exp(-1.j*np.sqrt(3.0)*ky*d1/2.0)*np.exp( 1.j*2.0*np.pi/3.0) 
-        f_p1_down  = np.exp(1.j*kx*d1) + np.exp(-1.j*kx*d1/2.0)*np.exp(1.j*np.sqrt(3.0)*ky*d1/2.0) + np.exp(-1.j*kx*d1/2.0)*np.exp(-1.j*np.sqrt(3.0)*ky*d1/2.0) 
-        # layer up
-        V1_up  =  1.0/np.sqrt(2.0)*d1/d_up*( np.sqrt(3.0)/2.0*self.m.Vdp_sigma_up*((d2_up/d_up)**(2.0)-1) - self.m.Vdp_pi_up*((d2_up/d_up)**(2.0)+1) ) 
-        V2_up  =  0.5*( np.sqrt(3.0)*self.m.Vdp_sigma_up-2.0*self.m.Vdp_pi_up )*(d2_up/d_up)*(d1/d_up)**(2.0) 
-        V3_up  =  1.0/np.sqrt(2.0)*( np.sqrt(3.0)/2.0*self.m.Vdp_sigma_up-self.m.Vdp_pi_up)*(d1/d_up)**(3.0) 
-        V4_up  =  0.5*( (3.0*(d2_up/d_up)**(2.0)-1)*self.m.Vdp_sigma_up - (2.0*np.sqrt(3.0)*(d2_up/d_up)**(2.0))*self.m.Vdp_pi_up )*(d1/d_up) 
-        V5_up  =  1.0/np.sqrt(2.0)*(d2_up/d_up)*( (3.0*(d2_up/d_up)**(2.0)-1)*self.m.Vdp_sigma_up - (2.0*np.sqrt(3.0)*((d2_up/d_up)**(2.0)-1))*self.m.Vdp_pi_up ) 
-        V6_up  =  1.0/np.sqrt(2.0)*(d2_up/d_up)*( ((d1/d_up)**2.0)*(np.sqrt(3.0)*self.m.Vdp_sigma_up-2.0*self.m.Vdp_pi_up)+2.0*self.m.Vdp_pi_up ) 
-        V7_up  =  1.0/np.sqrt(2.0)*(d2_up*d1**2.0)/d_up**3.0 * ( np.sqrt(3.0)*self.m.Vdp_sigma_up- 2.0*self.m.Vdp_pi_up ) 
-        V8_up  =  d1/d_up * ( ((d2_up/d_up)**2.0)*(np.sqrt(3.0)*self.m.Vdp_sigma_up-2.0*self.m.Vdp_pi_up)+self.m.Vdp_pi_up ) 
-        W1_up  =  0.125*(3.0*self.m.Vdd_sigma_up+4*self.m.Vdd_pi_up+self.m.Vdd_delta_up) 
-        W2_up  =  0.25*(self.m.Vdd_sigma_up+3.0*self.m.Vdd_delta_up) 
-        W3_up  = -np.sqrt(3.0)/(4*np.sqrt(2.0))*(self.m.Vdd_sigma_up-self.m.Vdd_delta_up) 
-        W4_up  =  0.125*(3.0*self.m.Vdd_sigma_up-4*self.m.Vdd_pi_up+self.m.Vdd_delta_up) 
-        W5_up  =  0.5*(self.m.Vpp_sigma_up+self.m.Vpp_pi_up) 
-        W6_up  =  self.m.Vpp_pi_up 
-        W7_up  =  0.5*(self.m.Vpp_sigma_up-self.m.Vpp_pi_up) 
-        W8_up  =  0.5*(self.m.Vdd_pi_up + self.m.Vdd_delta_up) 
-        W9_up  =  0.5*(self.m.Vdd_pi_up - self.m.Vdd_delta_up) 
-        # layer down
-        V1_down  =  1.0/np.sqrt(2.0)*d1/d_down*( np.sqrt(3.0)/2.0*self.m.Vdp_sigma_down*((d2_down/d_down)**(2.0)-1) - self.m.Vdp_pi_down*((d2_down/d_down)**(2.0)+1) ) 
-        V2_down  =  0.5*( np.sqrt(3.0)*self.m.Vdp_sigma_down-2.0*self.m.Vdp_pi_down )*(d2_down/d_down)*(d1/d_down)**(2.0) 
-        V3_down  =  1.0/np.sqrt(2.0)*( np.sqrt(3.0)/2.0*self.m.Vdp_sigma_down-self.m.Vdp_pi_down)*(d1/d_down)**(3.0) 
-        V4_down  =  0.5*( (3.0*(d2_down/d_down)**(2.0)-1)*self.m.Vdp_sigma_down - (2.0*np.sqrt(3.0)*(d2_down/d_down)**(2.0))*self.m.Vdp_pi_down )*(d1/d_down) 
-        V5_down  =  1.0/np.sqrt(2.0)*(d2_down/d_down)*( (3.0*(d2_down/d_down)**(2.0)-1)*self.m.Vdp_sigma_down - (2.0*np.sqrt(3.0)*((d2_down/d_down)**(2.0)-1))*self.m.Vdp_pi_down ) 
-        V6_down  =  1.0/np.sqrt(2.0)*(d2_down/d_down)*( ((d1/d_down)**2.0)*(np.sqrt(3.0)*self.m.Vdp_sigma_down-2.0*self.m.Vdp_pi_down)+2.0*self.m.Vdp_pi_down ) 
-        V7_down  =  1.0/np.sqrt(2.0)*(d2_down*d1**2.0)/d_down**3.0 * ( np.sqrt(3.0)*self.m.Vdp_sigma_down- 2.0*self.m.Vdp_pi_down ) 
-        V8_down  =  d1/d_down * ( ((d2_down/d_down)**2.0)*(np.sqrt(3.0)*self.m.Vdp_sigma_down-2.0*self.m.Vdp_pi_down)+self.m.Vdp_pi_down ) 
-        W1_down  =  1.0/8*(3.0*self.m.Vdd_sigma_down+4*self.m.Vdd_pi_down+self.m.Vdd_delta_down) 
-        W2_down  =  1.0/4*(self.m.Vdd_sigma_down+3.0*self.m.Vdd_delta_down) 
-        W3_down  = -np.sqrt(3.0)/(4*np.sqrt(2.0))*(self.m.Vdd_sigma_down-self.m.Vdd_delta_down) 
-        W4_down  =  1.0/8*(3.0*self.m.Vdd_sigma_down-4*self.m.Vdd_pi_down+self.m.Vdd_delta_down) 
-        W5_down  =  0.5*(self.m.Vpp_sigma_down+self.m.Vpp_pi_down) 
-        W6_down  =  self.m.Vpp_pi_down 
-        W7_down  =  0.5*(self.m.Vpp_sigma_down-self.m.Vpp_pi_down) 
-        W8_down  =  0.5*(self.m.Vdd_pi_down + self.m.Vdd_delta_down) 
-        W9_down  =  0.5*(self.m.Vdd_pi_down - self.m.Vdd_delta_down) 
-        # interlayer interactions
-        W12    = ((dz_pp/d_pp)**2.0)*self.m.Vpp_sigma_inter + (1.0-(dz_pp/d_pp)**2.0)*self.m.Vpp_pi_inter 
-        W13    = self.m.Vdd_sigma_inter * (( 0.5*((d1/d_dd)**2.0) - ((dz_dd/d_dd)**2.0) )**2.0) + self.m.Vdd_pi_inter * ( 3.0*((dz_dd/d_dd)**2.0)*(1.0 - ((dz_dd/d_dd)**2.0)) ) + self.m.Vdd_delta_inter * ( 0.75 * (((dz_dd/d_dd)**2.0)**2.0) )
-        W14    = ((d1/d_dd)**2.0) * ( 0.75*self.m.Vdd_sigma_inter + 0.25*((dz_dd/d_dd)**2.0)*self.m.Vdd_delta_inter + 0.5*((dz_dd/d_dd)**2.0)*self.m.Vdd_pi_inter )
-        W15    = 2.0*((d1/d_dd)**2.0)*self.m.Vdd_pi_inter + ((dz_dd/d_dd)**2.0)*self.m.Vdd_delta_inter
-        W16    = (3.0/16.0)*((d1/d_dd)**4.0) * ( 3.0*self.m.Vdd_sigma_inter + self.m.Vdd_delta_inter - 4.0*self.m.Vdd_pi_inter )
-        h1_pp  = np.exp(1.j*kx*R1x_pp)*np.exp(1.j*ky*R1y_pp) + np.exp(1.j*kx*R2x_pp)*np.exp(1.j*ky*R2y_pp) + np.exp(1.j*kx*R3x_pp)*np.exp(1.j*ky*R3y_pp) 
-        h1_dd  = np.exp(1.j*kx*R1x_dd)*np.exp(1.j*ky*R1y_dd) + np.exp(1.j*kx*R2x_dd)*np.exp(1.j*ky*R2y_dd) + np.exp(1.j*kx*R3x_dd)*np.exp(1.j*ky*R3y_dd) 
-        h2_dd  = (-0.5)*np.exp(1.j*kx*R1x_dd)*np.exp(1.j*ky*R1y_dd) + (-0.5)*np.exp(1.j*kx*R2x_dd)*np.exp(1.j*ky*R2y_dd) + np.exp(1.j*kx*R3x_dd)*np.exp(1.j*ky*R3y_dd) 
-        h3_dd  = (1.0+2.j*np.sqrt(3.0)/3.0)*np.exp(1.j*kx*R1x_dd)*np.exp(1.j*ky*R1y_dd) + (1.0-2.j*np.sqrt(3.0)/3.0)*np.exp(1.j*kx*R2x_dd)*np.exp(1.j*ky*R2y_dd)
-        # diagonal part
-        H_k[1,1]   = self.m.Ed_up  + (W1_up*g0)
-        H_k[2,2]   = self.m.Ed_up  + (W2_up*g0)
-        H_k[3,3]   = self.m.Ed_up  + (W1_up*g0) 
-        H_k[4,4]   = self.m.Ep1_up + (W5_up*g0)
-        H_k[5,5]   = self.m.Ep0_up + (W6_up*g0)
-        H_k[6,6]   = self.m.Ep1_up + (W5_up*g0)
-        H_k[7,7]   = self.m.Ed_odd_up  + (W8_up*g0)
-        H_k[8,8]   = self.m.Ed_odd_up  + (W8_up*g0) 
-        H_k[9,9]   = self.m.Ep1_odd_up + (W5_up*g0) 
-        H_k[10,10] = self.m.Ep0_odd_up + (W6_up*g0)
-        H_k[11,11] = self.m.Ep1_odd_up + (W5_up*g0)
-        H_k[12,12] = self.m.Ed_down  + (W1_down*g0)
-        H_k[13,13] = self.m.Ed_down  + (W2_down*g0)
-        H_k[14,14] = self.m.Ed_down  + (W1_down*g0)
-        H_k[15,15] = self.m.Ep1_down + (W5_down*g0)
-        H_k[16,16] = self.m.Ep0_down + (W6_down*g0)
-        H_k[17,17] = self.m.Ep1_down + (W5_down*g0) 
-        H_k[18,18] = self.m.Ed_odd_down  + (W8_down*g0)
-        H_k[19,19] = self.m.Ed_odd_down  + (W8_down*g0)
-        H_k[20,20] = self.m.Ep1_odd_down + (W5_down*g0)
-        H_k[21,21] = self.m.Ep0_odd_down + (W6_down*g0)
-        H_k[22,22] = self.m.Ep1_odd_down + (W5_down*g0)
-        # off-diagonal part W-dependent
-        H_k[1,2]   =  W3_up*g2 
-        H_k[1,3]   =  W4_up*g4 
-        H_k[2,3]   =  W3_up*g2 
-        H_k[4,6]   = -W7_up*g2 
-        H_k[7,8]   = -W9_up*g2 
-        H_k[9,11]  = -W7_up*g2 
-        H_k[12,13] =  W3_down*g2 
-        H_k[12,14] =  W4_down*g4 
-        H_k[13,14] =  W3_down*g2 
-        H_k[15,17] = -W7_down*g2 
-        H_k[18,19] = -W9_down*g2 
-        H_k[20,22] = -W7_down*g2  
-        # off-diagonal part V-dependent
-        H_k[1,4]   =  V1_up*f_m1_up 
-        H_k[1,5]   = -V2_up*f_0_up 
-        H_k[1,6]   =  V3_up*f_p1_up 
-        H_k[2,4]   = -V4_up*f_0_up
-        H_k[2,5]   = -V5_up*f_p1_up 
-        H_k[2,6]   =  V4_up*f_m1_up 
-        H_k[3,4]   = -V3_up*f_p1_up 
-        H_k[3,5]   = -V2_up*f_m1_up 
-        H_k[3,6]   = -V1_up*f_0_up 
-        H_k[7,9]   = -V6_up*f_p1_up 
-        H_k[7,10]  = -V8_up*f_m1_up 
-        H_k[7,11]  =  V7_up*f_0_up 
-        H_k[8,9]   =  V7_up*f_m1_up 
-        H_k[8,10]  =  V8_up*f_0_up 
-        H_k[8,11]  = -V6_up*f_p1_up 
-        H_k[12,15] =  V1_down*f_m1_down 
-        H_k[12,16] = -V2_down*f_0_down
-        H_k[12,17] =  V3_down*f_p1_down 
-        H_k[13,15] = -V4_down*f_0_down
-        H_k[13,16] = -V5_down*f_p1_down 
-        H_k[13,17] =  V4_down*f_m1_down 
-        H_k[14,15] = -V3_down*f_p1_down 
-        H_k[14,16] = -V2_down*f_m1_down 
-        H_k[14,17] = -V1_down*f_0_down
-        H_k[18,20] = -V6_down*f_p1_down 
-        H_k[18,21] = -V8_down*f_m1_down 
-        H_k[18,22] =  V7_down*f_0_down
-        H_k[19,20] =  V7_down*f_m1_down 
-        H_k[19,21] =  V8_down*f_0_down
-        H_k[19,22] = -V6_down*f_p1_down 
-        # layer interactions
-        H_k[2,13]  = -0.5*W13*h1_dd
-        H_k[5,16]  = -0.5*W12*h1_pp
-        H_k[1,14] = h2_dd*W14 + h1_dd*W15 + h3_dd*W16
-        H_k[3,12] = np.conjugate(H_k[1,14])   
-        # SOC
-        H_k[23:45,23:45] = H_k[1:23,1:23]
-        # spin1
-        # even_up
-        H_k[1,1]               = H_k[1,1]               + (-1.0)*self.m.lambda_M_up
-        H_k[2,2]               = H_k[2,2]               +   0.0
-        H_k[3,3]               = H_k[3,3]               + ( 1.0)*self.m.lambda_M_up
-        H_k[4,4]               = H_k[4,4]               + (-1.0/2.0)*self.m.lambda_X2_up
-        H_k[5,5]               = H_k[5,5]               +   0.0
-        H_k[6,6]               = H_k[6,6]               + ( 1.0/2.0)*self.m.lambda_X2_up
-        # odd_up
-        H_k[7,7]               = H_k[7,7]               + (-1.0/2.0)*self.m.lambda_M_up
-        H_k[8,8]               = H_k[8,8]               + ( 1.0/2.0)*self.m.lambda_M_up
-        H_k[9,9]               = H_k[9,9]               + (-1.0/2.0)*self.m.lambda_X2_up
-        H_k[10,10]             = H_k[10,10]             +  0.0
-        H_k[11,11]             = H_k[11,11]             + (1.0/2.0)*self.m.lambda_X2_up            
-        # even_down
-        H_k[1+11,1+11]         = H_k[1+11,1+11]         + (-1.0)*self.m.lambda_M_down
-        H_k[2+11,2+11]         = H_k[2+11,2+11]         +   0.0
-        H_k[3+11,3+11]         = H_k[3+11,3+11]         + ( 1.0)*self.m.lambda_M_down
-        H_k[4+11,4+11]         = H_k[4+11,4+11]         + (-1.0/2.0)*self.m.lambda_X2_down
-        H_k[5+11,5+11]         = H_k[5+11,5+11]         +   0.0
-        H_k[6+11,6+11]         = H_k[6+11,6+11]         + ( 1.0/2.0)*self.m.lambda_X2_down
-        # odd_down
-        H_k[7+11,7+11]         = H_k[7+11,7+11]         + (-1.0/2.0)*self.m.lambda_M_down
-        H_k[8+11,8+11]         = H_k[8+11,8+11]         + ( 1.0/2.0)*self.m.lambda_M_down
-        H_k[9+11,9+11]         = H_k[9+11,9+11]         + (-1.0/2.0)*self.m.lambda_X2_down
-        H_k[10+11,10+11]       = H_k[10+11,10+11]       +   0.0
-        H_k[11+11,11+11]       = H_k[11+11,11+11]       + ( 1.0/2.0)*self.m.lambda_X2_down
-        # spin2
-        # even_up            
-        H_k[1+22,1+22]         = H_k[1+22,1+22]         - (-1.0)*self.m.lambda_M_up
-        H_k[2+22,2+22]         = H_k[2+22,2+22]         -   0.0
-        H_k[3+22,3+22]         = H_k[3+22,3+22]         - ( 1.0)*self.m.lambda_M_up
-        H_k[4+22,4+22]         = H_k[4+22,4+22]         - (-1.0/2.0)*self.m.lambda_X2_up
-        H_k[5+22,5+22]         = H_k[5+22,5+22]         -   0.0
-        H_k[6+22,6+22]         = H_k[6+22,6+22]         - ( 1.0/2.0)*self.m.lambda_X2_up
-        # odd_up
-        H_k[7+22,7+22]         = H_k[7+22,7+22]         - (-1.0/2.0)*self.m.lambda_M_up
-        H_k[8+22,8+22]         = H_k[8+22,8+22]         - ( 1.0/2.0)*self.m.lambda_M_up
-        H_k[9+22,9+22]         = H_k[9+22,9+22]         - (-1.0/2.0)*self.m.lambda_X2_up
-        H_k[10+22,10+22]       = H_k[10+22,10+22]       -  0.0
-        H_k[11+22,11+22]       = H_k[11+22,11+22]       - (1.0/2.0)*self.m.lambda_X2_up            
-        # even_down
-        H_k[1+11+22,1+11+22]   = H_k[1+11+22,1+11+22]   - (-1.0)*self.m.lambda_M_down
-        H_k[2+11+22,2+11+22]   = H_k[2+11+22,2+11+22]   -   0.0
-        H_k[3+11+22,3+11+22]   = H_k[3+11+22,3+11+22]   - ( 1.0)*self.m.lambda_M_down
-        H_k[4+11+22,4+11+22]   = H_k[4+11+22,4+11+22]   - (-1.0/2.0)*self.m.lambda_X2_down
-        H_k[5+11+22,5+11+22]   = H_k[5+11+22,5+11+22]   -   0.0
-        H_k[6+11+22,6+11+22]   = H_k[6+11+22,6+11+22]   - ( 1.0/2.0)*self.m.lambda_X2_down
-        # odd_down
-        H_k[7+11+22,7+11+22]   = H_k[7+11+22,7+11+22]   - (-1.0/2.0)*self.m.lambda_M_down
-        H_k[8+11+22,8+11+22]   = H_k[8+11+22,8+11+22]   - ( 1.0/2.0)*self.m.lambda_M_down
-        H_k[9+11+22,9+11+22]   = H_k[9+11+22,9+11+22]   - (-1.0/2.0)*self.m.lambda_X2_down
-        H_k[10+11+22,10+11+22] = H_k[10+11+22,10+11+22] -  0.0
-        H_k[11+11+22,11+11+22] = H_k[11+11+22,11+11+22] - (1.0/2.0)*self.m.lambda_X2_down  
-        # even-odd spin mixing
-        # layer up
-        H_k[1,7+22]  = np.sqrt(3.0/2.0)*self.m.lambda_M_up
-        H_k[2,8+22]  = self.m.lambda_M_up
-        H_k[4,10+22] = self.m.lambda_X2_up/np.sqrt(2.0)
-        H_k[5,11+22] = self.m.lambda_X2_up/np.sqrt(2.0)
-        H_k[7,2+22]  = self.m.lambda_M_up
-        H_k[8,3+22]  = np.sqrt(3.0/2.0)*self.m.lambda_M_up
-        H_k[9,5+22]  = self.m.lambda_X2_up/np.sqrt(2.0)
-        H_k[10,6+22] = self.m.lambda_X2_up/np.sqrt(2.0)
-        # layer down; AB stacking
-        H_k[2+11,7+22+11]  = np.sqrt(3.0/2.0)*self.m.lambda_M_down
-        H_k[3+11,8+22+11]  = self.m.lambda_M_down
-        H_k[4+11,10+22+11] = self.m.lambda_X2_down/np.sqrt(2.0)
-        H_k[5+11,11+22+11] = self.m.lambda_X2_down/np.sqrt(2.0)
-        H_k[7+11,1+22+11]  = self.m.lambda_M_down
-        H_k[8+11,2+22+11]  = np.sqrt(3.0/2.0)*self.m.lambda_M_down
-        H_k[9+11,5+22+11]  = self.m.lambda_X2_down/np.sqrt(2.0)
-        H_k[10+11,6+22+11] = self.m.lambda_X2_down/np.sqrt(2.0)  
-        
-        H_kk = H_k[1:,1:]
-        H_kk += np.conjugate(np.triu(H_kk, k=1)).T
-        np.fill_diagonal(H_kk, H_kk.diagonal() + self.m.offset)
-        return H_kk
+    
 
 class EigenSolver:
 
@@ -698,9 +335,9 @@ class EigenSolver:
         self.model = model
 
     def solve_k(self, k, get_spin=False):
-        hamiltonian = self.model.build_tb_hamiltonian_new(k[0],k[1])
+        hamiltonian = self.model.build_tb_hamiltonian(k[0],k[1])
         if get_spin is False:
-            return eigh(hamiltonian, eigvals_only=True)[11:33]
+            return eigh(hamiltonian, eigvals_only=True)
         else:
             val, vec = eigh(hamiltonian, eigvals_only=False)
             vec2 = np.real(np.conjugate(vec)*vec)
@@ -708,8 +345,7 @@ class EigenSolver:
             vec2 = vec2.reshape((2,no_bands,-1))
             spin = np.sum(vec2[0,:,:], axis=0)-np.sum(vec2[1,:,:], axis=0)
             comp = np.sum(vec2, axis=0)
-            #return val, spin, comp
-            return val[11:33], spin[11:33], comp[11:33]
+            return val, spin, comp
         
     def solve_at_points(self, k_points, get_spin=False):
         if get_spin is False:
@@ -742,7 +378,6 @@ class Plotting:
     def __init__(self, model, directory=None):
         self.grid_k = model.BZ_path
         self.critical_points = model.critical_points
-        self.critical_points_indices = model.critical_points_indices
         if directory:
             self.directory = os.path.join('./', directory)
             os.makedirs(directory, exist_ok=True)
@@ -800,6 +435,7 @@ class Plotting:
         ax.set_xlabel('k (nm$^{-1}$)')
         ax.set_ylabel('E (eV)')
 
+
         # plot dispersion relation
         Ek_target = np.array(Ek_target)
         Ek_output1 = np.array(Ek_output1)
@@ -840,22 +476,22 @@ class Plotting:
         y_label : string
             label of y-axis
         """
-        pointsize = .5
+        pointsize=5.
+        
         fig, ax = plt.subplots(figsize=(8, 6))
-        ax.axes.set_aspect(.1)
+        ax.axes.set_aspect(3.5)
         ax.set_xlabel('k (nm$^{-1}$)')
         ax.set_ylabel('E (eV)')
+        ax.set_ylim([-4,3])
 
-        k_path = np.linspace(0., 1., num=self.grid_k.shape[0])
         # plot dispersion relation
         Ek_target = np.array(target[0])
         spin_target = np.array(target[1])
         Ek_output = np.array(output[0])
         spin_output = np.array(output[1])
-        
         for band_idx in range(Ek_target.shape[1]):
-            ax.scatter(k_path, Ek_target[:,band_idx], s=pointsize, marker='.', c='k', cmap='bwr',label='Target band')
-            ax.scatter(k_path, Ek_output[:,band_idx], s=pointsize, marker='.', c=spin_output[:,band_idx], cmap='bwr', label='Fitted band')
+            ax.scatter((self.grid_k[:,0]+self.grid_k[:,1])/au.Ah,Ek_target[:,band_idx], s=pointsize, marker='.', c='k', cmap='bwr',label='Target band')
+            ax.scatter((self.grid_k[:,0]+self.grid_k[:,1])/au.Ah,Ek_output[:,band_idx], s=pointsize, marker='.', c=spin_output[:,band_idx], cmap='bwr', label='Fitted band')
 
         handles, labels = plt.gca().get_legend_handles_labels()
         by_label = dict(zip(labels, handles))
@@ -864,61 +500,13 @@ class Plotting:
         text_shift_x = (ax.get_xlim()[1] - ax.get_xlim()[0])*0.01
         plot_max_y = ax.get_ylim()[1]
 
-        for (name, position_index) in self.critical_points_indices:
-             position_k=k_path[position_index]
+        for (name, position) in self.critical_points:
+             position_k=position/au.Ah
              ax.annotate(name, xy=(position_k-text_shift_x, plot_max_y), xytext=(position_k-text_shift_x, plot_max_y + 0.1))
              ax.axvline(x=position_k, linestyle='--', color='black')
         filename = f'{plot_name}.png'
-        plt.savefig(os.path.join(self.directory, "plots", filename), bbox_inches='tight', dpi=400)
+        plt.savefig(os.path.join(self.directory, "plots", filename), bbox_inches='tight', dpi=300)
         plt.close()
-        
-    
-    def plot_Ek_output_target_ss(self, target, output, plot_name):
-        """ Plots dispersion relations for
-        two given lists of bands.
-
-        Parameters
-        ----------
-        Ek_. : List[array]
-            List of arrays of eigenvalues
-        x_label : string
-            label of x-axis
-        y_label : string
-            label of y-axis
-        """
-        pointsize = .5
-        fig, ax = plt.subplots(figsize=(8, 6))
-        ax.axes.set_aspect(.2)
-        ax.set_xlabel('k (nm$^{-1}$)')
-        ax.set_ylabel('E (eV)')
-        ax.set_ylim([-2,2.])
-
-        k_path = np.linspace(0., 1., num=self.grid_k.shape[0])
-        # plot dispersion relation
-        Ek_target = np.array(target[0])
-        spin_target = np.array(target[1])
-        
-        for band_idx in range(Ek_target.shape[1]):
-            ax.scatter(k_path, Ek_target[:,band_idx], s=pointsize, marker='.', c='k', cmap='bwr',label='Target band')
-            for out in output:
-                Ek_output = np.array(out[0])
-                spin_output = np.array(out[1])
-                ax.scatter(k_path, Ek_output[:,band_idx], s=pointsize, marker='.', c=spin_output[:,band_idx], cmap='bwr', label='Fitted band')
-
-        handles, labels = plt.gca().get_legend_handles_labels()
-        by_label = dict(zip(labels, handles))
-        ax.legend(by_label.values(), by_label.keys(), loc='upper right')
-
-        text_shift_x = (ax.get_xlim()[1] - ax.get_xlim()[0])*0.01
-        plot_max_y = ax.get_ylim()[1]
-
-        for (name, position_index) in self.critical_points_indices:
-             position_k=k_path[position_index]
-             ax.annotate(name, xy=(position_k-text_shift_x, plot_max_y), xytext=(position_k-text_shift_x, plot_max_y + 0.1))
-             ax.axvline(x=position_k, linestyle='--', color='black')
-        filename = f'{plot_name}.png'
-        plt.savefig(os.path.join(self.directory, "plots", filename), bbox_inches='tight', dpi=400)
-        plt.close()    
         
     def plot_Ek_output_target0(self, Ek_target, Ek_output1, Ek_output2, Ek_output3):
         """ Plots dispersion relations for
@@ -1012,15 +600,9 @@ class Plotting:
         plt.close()
 
 
-def load_data_tomek(filename):
+def load_data(filename):
     return np.roll(np.loadtxt(filename)[::-1,1].reshape(101,12)[:,::2], 2, axis=0)  # roll to move CB minimum into K point
 
-def load_data_kasia(filename):
-    data = np.reshape(np.loadtxt(filename), (201,22,-1))[:131]
-    return data[:,:,2], data[:,:,4]*2-1.
-
-def load_k_path(filename):
-    return np.loadtxt(filename)[:131,:2]
 
 def load_np(filename):
     return np.load(filename)
