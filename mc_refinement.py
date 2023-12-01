@@ -99,8 +99,9 @@ def _residuum(x, eigen_solver, real_bands, real_spins):
 
 material.update_parameters(*evo_parameters)
 print(residuum(eigen_solver, real_bands, real_spins))
-fitted_bands, fitted_spins, _ = eigen_solver.solve_BZ_path(get_spin=True)
+fitted_bands, fitted_spins, fitted_comps = eigen_solver.solve_BZ_path(get_spin=True)
 plotting.plot_Ek_output_target_ss([real_bands, real_spins], [[fitted_bands, fitted_spins]], "fit_starting")
+plotting.plot_Ek_output_target_ss([real_bands, real_spins], [[fitted_bands, fitted_comps]], "fit_starting_layer_comp")
 
 res = dual_annealing(_residuum, 
                bounds = [(-2.,2.) for _ in range(len(idx_to_modify))],
