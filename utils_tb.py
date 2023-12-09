@@ -143,8 +143,7 @@ class TMDCmaterial3:
 class Lattice:
 
     def __init__(self):
-        lattice_vectors = np.array([[1.,0.], [-.5, np.sqrt(3.)/2.]])
-        #self.K_points = [np.array([np.pi*4./3., 0.]), np.array([np.pi*4./6., np.pi*2./np.sqrt(3.)])]
+        self.lattice_vectors = np.array([[1.,0.], [-.5,np.sqrt(3.)/2.]])
         self.K_points = [np.array([np.pi*4./3.,np.pi*4./np.sqrt(3.)]), np.array([np.pi*2./3,np.pi*2./np.sqrt(3.)])]
         RB1 = np.array([0.,-1.])
         RB2 = np.array([np.sqrt(3.),1.])/2.
@@ -258,6 +257,7 @@ class BandModel:
         # intrinistic spin-orbit coupling -- diagonal part:
         diagonal += self.m.l_diag
         np.fill_diagonal(hh_m, diagonal)
+        breakpoint()
         # hoppings
         for h in self.hoppingsMX:
             hh_m += self.hopping_matrix_(0., 0., h[0], h[1], 3)*np.exp(1.j*(kx*h[0]+ky*h[1]))
@@ -334,10 +334,13 @@ class EigenSolver:
     def __init__(self, model):
         self.model = model
 
-    def solve_k(self, k, get_spin=False):
+    def solve_k(self, k, get_spin=False, get_vec=False):
         hamiltonian = self.model.build_tb_hamiltonian(k[0],k[1])
         if get_spin is False:
-            return eigh(hamiltonian, eigvals_only=True)
+            if get_vec:
+                return eigh(hamiltonian, eigvals_only=False)
+            else:
+                return eigh(hamiltonian, eigvals_only=True)
         else:
             val, vec = eigh(hamiltonian, eigvals_only=False)
             vec2 = np.real(np.conjugate(vec)*vec)
@@ -345,21 +348,42 @@ class EigenSolver:
             vec2 = vec2.reshape((2,no_bands,-1))
             spin = np.sum(vec2[0,:,:], axis=0)-np.sum(vec2[1,:,:], axis=0)
             comp = np.sum(vec2, axis=0)
-            return val, spin, comp
+            if get_vec:
+                return val, vec, spin
+            else:
+                return val, spin, comp
         
-    def solve_at_points(self, k_points, get_spin=False):
+    def solve_at_points(self, k_points, get_spin=False, get_vec=False):
         if get_spin is False:
-            return np.array([self.solve_k(k) for k in k_points])
+            if get_vec:
+                vals = []
+                vecs = []
+                for k in k_points:
+                    val, vec = self.solve_k(k, get_vec=True)
+                    vals.append(val)
+                    vecs.append(vec)
+                return np.array(vals), np.array(vecs)
+            else:
+                return np.array([self.solve_k(k) for k in k_points])
         else:
             vals = []
             spins = []
             comps = []
-            for k in k_points:
-                val, spin, comp = self.solve_k(k, get_spin=True)
-                vals.append(val)
-                spins.append(spin)
-                comps.append(comp)
-            return np.array(vals), np.array(spins), np.array(comps)
+            if get_vec: 
+                vecs = []
+                for k in k_points:
+                    val, vec, spin = self.solve_k(k, get_spin=True, get_vec=True)
+                    vals.append(val)
+                    vecs.append(vec)
+                    spins.append(spin)
+                return np.array(vals), np.array(vecs), np.array(spins)                
+            else:           
+                for k in k_points:
+                    val, spin, comp = self.solve_k(k, get_spin=True)
+                    vals.append(val)
+                    spins.append(spin)
+                    comps.append(comp)
+                return np.array(vals), np.array(spins), np.array(comps)
 
     def solve_BZ_path(self, get_spin=False):
         return self.solve_at_points(self.model.BZ_path, get_spin=get_spin)
