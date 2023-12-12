@@ -83,6 +83,69 @@ class TMDCmaterial:
                                  self.lm, 0., -self.lm,  self.lx2/2., 0., -self.lx2/2.])
 
 
+class TMDCmaterial11:
+    """ Class containing lattice model parameters.
+
+    """
+    def __init__(self, a0, dp, Vdps, Vdpp, Vd2s, Vd2p, Vd2d, Vp2s, Vp2p, Ed, Ep1, Ep0, lm, lx2):
+        self.a0 = a0/au.Ah
+        self.dr = self.a0/np.sqrt(3.)
+        self.dp = dp/au.Ah
+        self.dd = np.sqrt(self.dr**2+self.dp**2)
+        self.dim = 22
+        self.dim2 = self.dim*self.dim
+        self.dim12 = int(self.dim/2)
+        self.odd = True
+        self.efield = 0.
+        # hoppings
+        self.Vdps = Vdps/au.Eh
+        self.Vdpp = Vdpp/au.Eh
+        self.Vd2s = Vd2s/au.Eh
+        self.Vd2p = Vd2p/au.Eh
+        self.Vd2d = Vd2d/au.Eh
+        self.Vp2s = Vp2s/au.Eh
+        self.Vp2p = Vp2p/au.Eh
+        # onsite energy
+        self.Ed = Ed/au.Eh
+        self.Ep1 = Ep1/au.Eh
+        self.Ep0 = Ep0/au.Eh
+        self.Eodd = np.array([-1.5,0.,-1.5,3.,3.])  # correction for odd bands
+        self.diag = np.tile(np.array([self.Ed, self.Ed, self.Ed,
+                                      self.Ep1, self.Ep0, self.Ep1,
+                                      self.Ep1+self.Eodd[0], self.Ep0+self.Eodd[1], self.Ep1+self.Eodd[2], 
+                                      self.Ed+self.Eodd[3], self.Ed+self.Eodd[4]]),2)
+        # intrinsic spin-orbit
+        self.lm = lm/au.Eh
+        self.lx2 = lx2/au.Eh
+        self.l_diag = np.array([-self.lm, 0.,  self.lm, -self.lx2/2., 0.,  self.lx2/2., -self.lx2/2., 0.,  self.lx2/2., -self.lm/2.,  self.lm/2.,
+                                 self.lm, 0., -self.lm,  self.lx2/2., 0., -self.lx2/2.,  self.lx2/2., 0., -self.lx2/2.,  self.lm/2., -self.lm/2.])
+
+    def update_parameters(self,  Vdps, Vdpp, Vd2s, Vd2p, Vd2d, Vp2s, Vp2p, Ed, Ep1, Ep0, lm, lx2):
+         # hoppings
+        self.Vdps = Vdps
+        self.Vdpp = Vdpp
+        self.Vd2s = Vd2s
+        self.Vd2p = Vd2p
+        self.Vd2d = Vd2d
+        self.Vp2s = Vp2s
+        self.Vp2p = Vp2p
+        # onsite energy
+        self.Ed = Ed
+        self.Ep1 = Ep1
+        self.Ep0 = Ep0
+        self.diag = np.tile(np.array([self.Ed, self.Ed, self.Ed,
+                                      self.Ep1, self.Ep0, self.Ep1,
+                                      self.Ep1+self.Eodd[0], self.Ep0+self.Eodd[1], self.Ep1+self.Eodd[2], 
+                                      self.Ed+self.Eodd[3], self.Ed+self.Eodd[4]]),2)
+        self.lm = lm
+        self.lx2 = lx2
+        self.l_diag = np.array([-self.lm, 0.,  self.lm, -self.lx2/2., 0.,  self.lx2/2., -self.lx2/2., 0.,  self.lx2/2., -self.lm/2.,  self.lm/2.,
+                                 self.lm, 0., -self.lm,  self.lx2/2., 0., -self.lx2/2.,  self.lx2/2., 0., -self.lx2/2.,  self.lm/2., -self.lm/2.])
+        
+    def set_e_field(self, efield):
+        self.efield = efield
+        
+
 class TMDCmaterial3:
     """ Class containing lattice model parameters.
 
@@ -328,6 +391,147 @@ class BandModel:
             hh_m += self.hopping_matrix_6(0., 0., h[0], h[1], self.m)*np.exp(1.j*(kx*h[0]+ky*h[1]))   
         return hh_m
     
+    
+class BandModel11:
+
+    def __init__(self, parameters, lattice):
+        self.m = parameters
+        self.l = lattice
+        self.hoppingsMM = [h*self.m.a0/np.sqrt(3.) for h in self.l.hoppingsMM]
+        self.hoppingsMX = [h*self.m.a0/np.sqrt(3.) for h in self.l.hoppingsMX]
+        self.BZ_path = self.l.BZ_path/self.m.a0
+        self.critical_points = [(p[0], p[1]/self.m.a0) for p in self.l.critical_points]
+        self.K_points = [p/self.m.a0 for p in self.l.K_points]
+
+    def hopping_matrix_(self, x, y, x1, y1, linkstype):
+        """
+        create 22x22 hopping matrix that represents hopping integral within the tight-binding model
+        
+        orbitals basis = {Dm2, D0, Dp2, PEm1, PE0, PEp1, POm1, PO0, POp1, Dm1, Dp1}
+
+        """
+        m = self.m 
+        hh_m=np.zeros((m.dim,m.dim), dtype=np.complex128)
+        if linkstype == 1:
+        # M-M hoppings:
+            L = (x1-x)/m.a0
+            M = (y1-y)/m.a0
+            hh_m[0,0] = (3.*m.Vd2s + 4.*m.Vd2p + m.Vd2d)/8. 
+            hh_m[0,1] = (np.sqrt(3./2.)/4.)*(1.j*M+L)**2*(m.Vd2d-m.Vd2s)   
+            hh_m[0,2] = (1.j*M+L)**4*(3.*m.Vd2s - 4.*m.Vd2p + m.Vd2d)/8.
+            hh_m[1,0] = (np.sqrt(3./2.)/4.)*(-1.j*M+L)**2*(m.Vd2d-m.Vd2s)
+            hh_m[1,1] = (3.*m.Vd2d+m.Vd2s)/4.
+            hh_m[1,2] = (np.sqrt(3./2.)/4.)*(1.j*M+L)**2*(m.Vd2d-m.Vd2s)
+            hh_m[2,0] = (-1.j*M+L)**4*(3.*m.Vd2s - 4.*m.Vd2p + m.Vd2d)/8.  
+            hh_m[2,1] = (np.sqrt(3./2.)/4.)*(-1.j*M+L)**2*(m.Vd2d-m.Vd2s) 
+            hh_m[2,2] = (3.*m.Vd2s + 4.*m.Vd2p + m.Vd2d)/8.
+            if m.odd:
+                # odd block
+                hh_m[9,9] = (m.Vd2p+m.Vd2d)/2.
+                hh_m[9,10] = -(1.j*M+L)**2*(m.Vd2p-m.Vd2d)/2.
+                hh_m[10,9] = -(-1.j*M+L)**2*(m.Vd2p-m.Vd2d)/2.
+                hh_m[10,10] = (m.Vd2p+m.Vd2d)/2.
+        elif linkstype == 2:
+        # X2-X2 hoppings
+            L = (x1-x)/m.a0
+            M = (y1-y)/m.a0
+            hh_m[3,3] = (m.Vp2s+m.Vp2p)/2.
+            hh_m[3,4] = 0. 
+            hh_m[3,5] = -1.*(1.j*M+L)**2*(m.Vp2s-m.Vp2p)/2.  # -1 = Maciek correction
+            hh_m[4,3] = 0.
+            hh_m[4,4] = m.Vp2p
+            hh_m[4,5] = 0. 
+            hh_m[5,3] = -1.*(-1.j*M+L)**2*(m.Vp2s-m.Vp2p)/2.  # -1 = Maciek correction
+            hh_m[5,4] = 0. 
+            hh_m[5,5] = (m.Vp2s+m.Vp2p)/2. 
+            if m.odd:
+                # odd block
+                hh_m[6,6] = (m.Vp2s+m.Vp2p)/2.
+                hh_m[6,7] = 0. 
+                hh_m[6,8] = -1.*(1.j*M+L)**2*(m.Vp2s-m.Vp2p)/2.  # -1 = Maciek correction
+                hh_m[7,6] = 0.
+                hh_m[7,7] = m.Vp2p
+                hh_m[7,8] = 0. 
+                hh_m[8,6] = -1.*(-1.j*M+L)**2*(m.Vp2s-m.Vp2p)/2.  # -1 = Maciek correction
+                hh_m[8,7] = 0. 
+                hh_m[8,8] = (m.Vp2s+m.Vp2p)/2.
+        else:
+        # M-X2 or X2-M hoppings
+            L = (x1-x)/m.dd
+            M = (y1-y)/m.dd
+            if linkstype == 4:
+            # X2-M hoppings, T(-R) = T^\dag(R)
+                L *= -1
+                M *= -1
+            hh_m[0,3] = (1.j*M+L)*(np.sqrt(3.)/2.*m.Vdps*((m.dp/m.dd)**2-1.)-m.Vdpp*((m.dp/m.dd)**2+1.))/np.sqrt(2.)
+            hh_m[0,4] = -(1.j*M+L)**2*(m.dp/m.dd)*(np.sqrt(3.)*m.Vdps-2.*m.Vdpp)/2.
+            hh_m[0,5] = -(1.j*M+L)**3*(np.sqrt(3.)/2.*m.Vdps-m.Vdpp)/np.sqrt(2.)*(-1.)  # (-1) = Maciek correction
+            hh_m[1,3] = -(-1.j*M+L)*((3.*(m.dp/m.dd)**2-1.)*m.Vdps-2.*np.sqrt(3.)*(m.dp/m.dd)**2*m.Vdpp)/2.
+            hh_m[1,4] = -(m.dp/m.dd)*((3.*(m.dp/m.dd)**2-1.)*m.Vdps-2.*np.sqrt(3.)*((m.dp/m.dd)**2-1.)*m.Vdpp)/np.sqrt(2.)
+            hh_m[1,5] = -( 1.j*M+L)*((3.*(m.dp/m.dd)**2-1.)*m.Vdps-2.*np.sqrt(3.)*(m.dp/m.dd)**2*m.Vdpp)/2.*(-1.)  # (-1) = Maciek correction 
+            hh_m[2,3] = -(-1.j*M+L)**3*(np.sqrt(3.)/2.*m.Vdps-m.Vdpp)/np.sqrt(2.)
+            hh_m[2,4] = -(-1.j*M+L)**2*(m.dp/m.dd)*(np.sqrt(3.)*m.Vdps-2.*m.Vdpp)/2. 
+            hh_m[2,5] = (-1.j*M+L)*(np.sqrt(3.)/2.*m.Vdps*((m.dp/m.dd)**2-1.)-m.Vdpp*((m.dp/m.dd)**2+1.))/np.sqrt(2.)*(-1.)  # (-1) = Maciek correction
+            if m.odd:
+                # odd block
+                hh_m[9,6] = -(m.dp/m.dd)*((L**2+M**2)*(np.sqrt(3.)*m.Vdps-2.*m.Vdpp)+2.*m.Vdpp)/np.sqrt(2.)
+                hh_m[9,7] = -(1.j*M+L)*((m.dp/m.dd)**2*(np.sqrt(3.)*m.Vdps-2.*m.Vdpp)+m.Vdpp)
+                hh_m[9,8] = -(m.dp/m.dd)*(1.j*M+L)**2*(np.sqrt(3.)*m.Vdps-2.*m.Vdpp)/np.sqrt(2.)*(-1.)  # (-1) = Maciek correction
+                hh_m[10,6] = (m.dp/m.dd)*(-1.j*M+L)**2*(np.sqrt(3.)*m.Vdps-2.*m.Vdpp)/np.sqrt(2.)
+                hh_m[10,7] = (-1.j*M+L)*((m.dp/m.dd)**2*(np.sqrt(3.)*m.Vdps-2.*m.Vdpp)+m.Vdpp)
+                hh_m[10,8] = (m.dp/m.dd)*((L**2+M**2)*(np.sqrt(3.)*m.Vdps-2.*m.Vdpp)+2.*m.Vdpp)/np.sqrt(2.)*(-1.)  # (-1) = Maciek correction
+            if linkstype == 4:    
+            # X2-M hoppings, T(-R) = T^\dag(R)
+                hh_m[3:6,0:3] = np.conjugate(hh_m[0:3,3:6]).transpose()
+                hh_m[0:3,3:6] = 0.
+                hh_m[6:9,9:11] = np.conjugate(hh_m[9:11,6:9]).transpose()
+                hh_m[9:11,6:9] = 0.
+        # spin-down block is the same:
+        hh_m[m.dim12:,m.dim12:] = hh_m[:m.dim12,:m.dim12]
+        return hh_m
+
+    def build_tb_hamiltonian(self, kx, ky):
+        hh_m = np.zeros((self.m.dim,self.m.dim), dtype=np.complex128)
+        diagonal = self.m.diag.copy()
+        # intrinistic spin-orbit coupling -- diagonal part:
+        diagonal += self.m.l_diag
+        np.fill_diagonal(hh_m, diagonal)
+        '''
+        # intrinistic spin-orbit coupling -- off-diagonal part:
+        lm = self.m.lm
+        lx2 = self.m.lx2
+        hh_m[0,20]+=lm; hh_m[20,0]+=lm; 
+        hh_m[1,21]+=lm*np.sqrt(3./2.); hh_m[21,1]+=lm*np.sqrt(3./2.)
+        hh_m[3,18]+=lx2/np.sqrt(2.); hh_m[18,3]+=lx2/np.sqrt(2.)
+        hh_m[4,19]+=lx2/np.sqrt(2.); hh_m[19,4]+=lx2/np.sqrt(2.)
+        hh_m[6,15]+=lx2/np.sqrt(2.); hh_m[15,6]+=lx2/np.sqrt(2.)
+        hh_m[7,16]+=lx2/np.sqrt(2.); hh_m[16,7]+=lx2/np.sqrt(2.)
+        hh_m[9,12]+=lm*np.sqrt(3./2.); hh_m[12,9]+=lm*np.sqrt(3./2.)
+        hh_m[10,13]+=lm; hh_m[13,10]+=lm; 
+        '''
+        # e-field:
+        hh_m[3,6] = self.m.efield/2.
+        hh_m[6,3] = hh_m[3,6]
+        hh_m[4,7] = -self.m.efield/2.
+        hh_m[7,4] = hh_m[4,7]
+        hh_m[5,8] = self.m.efield/2.
+        hh_m[8,5] = hh_m[5,8]
+        #
+        hh_m[3+11,6+11] = hh_m[3,6]
+        hh_m[6+11,3+11] = hh_m[6,3]
+        hh_m[4+11,7+11] = hh_m[4,7]
+        hh_m[7+11,4+11] = hh_m[7,4]
+        hh_m[5+11,8+11] = hh_m[5,8]
+        hh_m[8+11,5+11] = hh_m[8,5]
+        # hoppings
+        for h in self.hoppingsMX:
+            hh_m += self.hopping_matrix_(0., 0., h[0], h[1], 3)*np.exp(1.j*(kx*h[0]+ky*h[1]))
+            hh_m += self.hopping_matrix_(0., 0., h[0], h[1], 4)*np.exp(1.j*(kx*h[0]+ky*h[1]))
+        for h in self.hoppingsMM:
+            hh_m += self.hopping_matrix_(0., 0., h[0], h[1], 1)*np.exp(1.j*(kx*h[0]+ky*h[1]))
+            hh_m += self.hopping_matrix_(0., 0., h[0], h[1], 2)*np.exp(1.j*(kx*h[0]+ky*h[1]))
+        return hh_m
+
 
 class EigenSolver:
 
