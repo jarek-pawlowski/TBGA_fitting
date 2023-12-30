@@ -36,23 +36,23 @@ class SlicedBands:
     def __init__(self, real_bands, predicted_bands, bands):
         self.real_bands = real_bands
         self.predicted_bands = predicted_bands
-        
         self.bands = bands
 
     def get_sliced_bands(self):
-        if self.bands == "coductance":
+        if self.bands == "conductance":
             self.real_bands = self.real_bands[:, 6:10]
-            self.predicted_bands = self.predicted_bands[:, 6:10]
+            self.predicted_bands = self.predicted_bands[:, 12:16]  # [:, 6:10]
             return self
-        if self.bands == "coductance_and_valence":
+        if self.bands == "conductance_and_valence":
             self.real_bands = self.real_bands[:, 4:10]
-            self.predicted_bands = self.predicted_bands[:, 4:10]
+            self.predicted_bands = self.predicted_bands[:, 10:16]  # [:, 4:10]
             return self
         if self.bands == "valence":
             self.real_bands = self.real_bands[:, 4:6]
-            self.predicted_bands = self.predicted_bands[:, 4:6]
+            self.predicted_bands = self.predicted_bands[:, 10:12]  # [:, 4:6]
             return self
         if self.bands == "all":
+            self.predicted_bands = self.predicted_bands[:, 6:18]
             return self
         return self
 
@@ -122,11 +122,16 @@ class EvoSearch:
                                             sliced_real_bands, sliced_predicted_bands = SlicedBands(
                                                 real_bands=self.real_bands,
                                                 predicted_bands=fitted_bands,
-                                                bands=b,
+                                                bands=bands,
+                                            ).get_sliced_bands().get_bands()
+                                            _, predicted_bands = SlicedBands(
+                                                real_bands=self.real_bands,
+                                                predicted_bands=fitted_bands,
+                                                bands='all',
                                             ).get_sliced_bands().get_bands()
                                             result = {
                                                 "name": name,
-                                                "rmse": self._calculate_rmse(self.real_bands, fitted_bands),
+                                                "rmse": self._calculate_rmse(self.real_bands, predicted_bands),
                                                 "fit_rmse": self._calculate_rmse(sliced_real_bands, sliced_predicted_bands),
                                                 "tb_params": f"[{tb_params_str}]",
                                             }
@@ -167,8 +172,10 @@ class EvoSearch:
         comp_err = 0.
         for ks_idx in self.ks_indices:
             _, spins, comps = self.eigen_solver.solve_k(self.eigen_solver.model.BZ_path[ks_idx], get_spin=True)
-            spin_err += sqrt(mean_squared_error([-1., 1., -1., 1., 1., -1.], spins[4:10]))
-            comp_err += 1. if np.sum(np.array([comps[0,4]+comps[2,4], comps[1,5], comps[1,6], comps[0,7]+comps[2,7]]) - np.array([1., 1., 1., 1.])*compostition_loss) < 0. else 0.
+            #spin_err += sqrt(mean_squared_error([-1., 1., -1., 1., 1., -1.], spins[4:10]))
+            spin_err += sqrt(mean_squared_error([-1., 1., -1., 1., 1., -1.], spins[10:16]))
+            #comp_err += 1. if np.sum(np.array([comps[0,4]+comps[2,4], comps[1,5], comps[1,6], comps[0,7]+comps[2,7]]) - np.array([1., 1., 1., 1.])*compostition_loss) < 0. else 0.
+            comp_err += 1. if np.sum(np.array([comps[0,10]+comps[2,10], comps[1,11], comps[1,12], comps[0,13]+comps[2,13]]) - np.array([1., 1., 1., 1.])*compostition_loss) < 0. else 0.
         if metric == "rmse":
             return sqrt(mean_squared_error(real_bands, predicted_bands)) + spin_err + comp_err
         if metric == "mae":

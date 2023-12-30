@@ -144,6 +144,80 @@ class TMDCmaterial11:
         
     def set_e_field(self, efield):
         self.efield = efield
+  
+  
+class TMDCmaterial12:
+    """ Class containing lattice model parameters.
+
+    """
+    def __init__(self, a0, dp, Vdps, Vdpp, Vd2s, Vd2p, Vd2d, Vp2s, Vp2p, Ed, Ep1, Ep0, lm, lx2, 
+                 Eodd0, Eodd1, Eodd2, Eodd3, Eodd4):
+        self.a0 = a0/au.Ah
+        self.dr = self.a0/np.sqrt(3.)
+        self.dp = dp/au.Ah
+        self.dd = np.sqrt(self.dr**2+self.dp**2)
+        self.dim = 22
+        self.dim2 = self.dim*self.dim
+        self.dim12 = int(self.dim/2)
+        self.odd = True
+        self.efield = 0.
+        # hoppings
+        self.Vdps = Vdps/au.Eh
+        self.Vdpp = Vdpp/au.Eh
+        self.Vd2s = Vd2s/au.Eh
+        self.Vd2p = Vd2p/au.Eh
+        self.Vd2d = Vd2d/au.Eh
+        self.Vp2s = Vp2s/au.Eh
+        self.Vp2p = Vp2p/au.Eh
+        # onsite energy
+        self.Ed = Ed/au.Eh
+        self.Ep1 = Ep1/au.Eh
+        self.Ep0 = Ep0/au.Eh
+        self.Eodd0 = Eodd0/au.Eh
+        self.Eodd1 = Eodd1/au.Eh
+        self.Eodd2 = Eodd2/au.Eh
+        self.Eodd3 = Eodd3/au.Eh
+        self.Eodd4 = Eodd4/au.Eh       
+        self.diag = np.tile(np.array([self.Ed, self.Ed, self.Ed,
+                                      self.Ep1, self.Ep0, self.Ep1,
+                                      self.Ep1+self.Eodd0, self.Ep0+self.Eodd1, self.Ep1+self.Eodd2, 
+                                      self.Ed+self.Eodd3, self.Ed+self.Eodd4]),2)
+        # intrinsic spin-orbit
+        self.lm = lm/au.Eh
+        self.lx2 = lx2/au.Eh
+        self.l_diag = np.array([-self.lm, 0.,  self.lm, -self.lx2/2., 0.,  self.lx2/2., -self.lx2/2., 0.,  self.lx2/2., -self.lm/2.,  self.lm/2.,
+                                 self.lm, 0., -self.lm,  self.lx2/2., 0., -self.lx2/2.,  self.lx2/2., 0., -self.lx2/2.,  self.lm/2., -self.lm/2.])
+
+    def update_parameters(self,  Vdps, Vdpp, Vd2s, Vd2p, Vd2d, Vp2s, Vp2p, Ed, Ep1, Ep0, lm, lx2,
+                          Eodd0, Eodd1, Eodd2, Eodd3, Eodd4):
+         # hoppings
+        self.Vdps = Vdps
+        self.Vdpp = Vdpp
+        self.Vd2s = Vd2s
+        self.Vd2p = Vd2p
+        self.Vd2d = Vd2d
+        self.Vp2s = Vp2s
+        self.Vp2p = Vp2p
+        # onsite energy
+        self.Ed = Ed
+        self.Ep1 = Ep1
+        self.Ep0 = Ep0
+        self.Eodd0 = Eodd0
+        self.Eodd1 = Eodd1
+        self.Eodd2 = Eodd2
+        self.Eodd3 = Eodd3
+        self.Eodd4 = Eodd4
+        self.diag = np.tile(np.array([self.Ed, self.Ed, self.Ed,
+                                      self.Ep1, self.Ep0, self.Ep1,
+                                      self.Ep1+self.Eodd0, self.Ep0+self.Eodd1, self.Ep1+self.Eodd2, 
+                                      self.Ed+self.Eodd3, self.Ed+self.Eodd4]),2)
+        self.lm = lm
+        self.lx2 = lx2
+        self.l_diag = np.array([-self.lm, 0.,  self.lm, -self.lx2/2., 0.,  self.lx2/2., -self.lx2/2., 0.,  self.lx2/2., -self.lm/2.,  self.lm/2.,
+                                 self.lm, 0., -self.lm,  self.lx2/2., 0., -self.lx2/2.,  self.lx2/2., 0., -self.lx2/2.,  self.lm/2., -self.lm/2.])
+        
+    def set_e_field(self, efield):
+        self.efield = efield  
         
 
 class TMDCmaterial3:
@@ -320,7 +394,6 @@ class BandModel:
         # intrinistic spin-orbit coupling -- diagonal part:
         diagonal += self.m.l_diag
         np.fill_diagonal(hh_m, diagonal)
-        breakpoint()
         # hoppings
         for h in self.hoppingsMX:
             hh_m += self.hopping_matrix_(0., 0., h[0], h[1], 3)*np.exp(1.j*(kx*h[0]+ky*h[1]))
@@ -496,7 +569,6 @@ class BandModel11:
         # intrinistic spin-orbit coupling -- diagonal part:
         diagonal += self.m.l_diag
         np.fill_diagonal(hh_m, diagonal)
-        '''
         # intrinistic spin-orbit coupling -- off-diagonal part:
         lm = self.m.lm
         lx2 = self.m.lx2
@@ -508,13 +580,12 @@ class BandModel11:
         hh_m[7,16]+=lx2/np.sqrt(2.); hh_m[16,7]+=lx2/np.sqrt(2.)
         hh_m[9,12]+=lm*np.sqrt(3./2.); hh_m[12,9]+=lm*np.sqrt(3./2.)
         hh_m[10,13]+=lm; hh_m[13,10]+=lm; 
-        '''
         # e-field:
-        hh_m[3,6] = self.m.efield/2.
+        hh_m[3,6] += self.m.efield/2.
         hh_m[6,3] = hh_m[3,6]
-        hh_m[4,7] = -self.m.efield/2.
+        hh_m[4,7] -= self.m.efield/2.
         hh_m[7,4] = hh_m[4,7]
-        hh_m[5,8] = self.m.efield/2.
+        hh_m[5,8] += self.m.efield/2.
         hh_m[8,5] = hh_m[5,8]
         #
         hh_m[3+11,6+11] = hh_m[3,6]

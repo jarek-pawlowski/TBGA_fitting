@@ -28,9 +28,9 @@ material.update_parameters(*parameters)
 material.set_e_field(1.)
 
 bands, vecs, spins  = eigen_solver.solve_at_points(k_points=flake.nodes_k, get_spin=True, get_vec=True)
-# np.save('bands.npy', bands)
-# np.save('vecs.npy', vecs)
-# np.save('spins.npy', spins)
+np.save('bands.npy', bands)
+np.save('vecs.npy', vecs)
+np.save('spins.npy', spins)
 #bands = np.load('bands.npy')
 #vecs = np.load('vecs.npy')  # to index eigenstates: [no_k_point,:,no_eigenstate]
 #spins = np.load('spins.npy')
@@ -48,7 +48,7 @@ for plaq in flake.plaquettes:
     ky = flake.nodes_k[plaq[0],1]+flake.nodes_k[plaq[1],1]+flake.nodes_k[plaq[2],1]+flake.nodes_k[plaq[3],1]
     berry.append([kx,ky,F])
 berry = np.array(berry)
-berry[berry[:,2]>3.14]=0.
+berry[np.abs(berry[:,2])>1.]=0.
 
 plot = PlottingOnFlake(flake, directory='plots')
 plot.plot_berry_flake(berry)

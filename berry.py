@@ -45,7 +45,7 @@ for plaq in flake.plaquettes:
     ky = flake.nodes_k[plaq[0],1]+flake.nodes_k[plaq[1],1]+flake.nodes_k[plaq[2],1]+flake.nodes_k[plaq[3],1]
     berry.append([kx,ky,F])
 berry = np.array(berry)
-berry[berry[:,2]>3.14]=0.
+berry[np.abs(berry[:,2])>1.]=0.
 
 plot = PlottingOnFlake(flake, directory='plots')
 plot.plot_berry_flake(berry)
