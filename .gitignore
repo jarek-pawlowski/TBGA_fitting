@@ -10,3 +10,4 @@ results*
 plots/
 test_plots/
 tags/
+*.npy

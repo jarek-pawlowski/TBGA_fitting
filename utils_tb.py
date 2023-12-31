@@ -259,16 +259,59 @@ class Newmaterial:
         self.Vdd_delta_inter = Vdd_delta_inter
         self.offset = offset
         
+    def set_parameters(self, 
+                       Ed_up,Ep1_up,Ep0_up,Vdp_sigma_up,Vdp_pi_up,Vdd_sigma_up,Vdd_pi_up,Vdd_delta_up,Vpp_sigma_up,Vpp_pi_up,Ep1_odd_up,Ep0_odd_up,Ed_odd_up,
+                       Ed_down,Ep1_down,Ep0_down,Vdp_sigma_down,Vdp_pi_down,Vdd_sigma_down,Vdd_pi_down,Vdd_delta_down,Vpp_sigma_down,Vpp_pi_down,Ep1_odd_down,Ep0_odd_down,Ed_odd_down,
+                       Vpp_sigma_inter, Vpp_pi_inter, Vdd_sigma_inter, Vdd_pi_inter, Vdd_delta_inter):
+        
+        self.Ed_up = Ed_up
+        self.Ep1_up = Ep1_up
+        self.Ep0_up = Ep0_up
+        self.Vdp_sigma_up = Vdp_sigma_up
+        self.Vdp_pi_up = Vdp_pi_up
+        self.Vdd_sigma_up = Vdd_sigma_up
+        self.Vdd_pi_up = Vdd_pi_up
+        self.Vdd_delta_up = Vdd_delta_up
+        self.Vpp_sigma_up = Vpp_sigma_up
+        self.Vpp_pi_up = Vpp_pi_up
+        self.Ep1_odd_up = Ep1_odd_up
+        self.Ep0_odd_up = Ep0_odd_up
+        self.Ed_odd_up = Ed_odd_up
+        
+        self.Ed_down = Ed_down
+        self.Ep1_down = Ep1_down
+        self.Ep0_down = Ep0_down
+        self.Vdp_sigma_down = Vdp_sigma_down
+        self.Vdp_pi_down = Vdp_pi_down
+        self.Vdd_sigma_down = Vdd_sigma_down
+        self.Vdd_pi_down = Vdd_pi_down
+        self.Vdd_delta_down = Vdd_delta_down
+        self.Vpp_sigma_down = Vpp_sigma_down
+        self.Vpp_pi_down = Vpp_pi_down
+        self.Ep1_odd_down = Ep1_odd_down
+        self.Ep0_odd_down = Ep0_odd_down
+        self.Ed_odd_down = Ed_odd_down
+        
+        self.Vpp_sigma_inter = Vpp_sigma_inter
+        self.Vpp_pi_inter = Vpp_pi_inter
+        self.Vdd_sigma_inter = Vdd_sigma_inter
+        self.Vdd_pi_inter = Vdd_pi_inter
+        self.Vdd_delta_inter = Vdd_delta_inter
+
 
 class Lattice:
 
     def __init__(self, BZ_path=None):
-        lattice_vectors = np.array([[1.,0.], [-.5, np.sqrt(3.)/2.]])
+        self.lattice_vectors = np.array([[0.,1.], [np.sqrt(3.)/2.,-.5]])
+        #self.lattice_vectors = np.array([[1.,0.], [-.5, np.sqrt(3.)/2.]])
         #self.K_points = [np.array([np.pi*4./3., 0.]), np.array([np.pi*4./6., np.pi*2./np.sqrt(3.)])]
         self.K_points = [np.array([np.pi*4./3.,np.pi*4./np.sqrt(3.)]), np.array([np.pi*2./3,np.pi*2./np.sqrt(3.)])]
-        RB1 = np.array([0.,-1.])
-        RB2 = np.array([np.sqrt(3.),1.])/2.
-        RB3 = np.array([-np.sqrt(3.),1.])/2.
+        # RB1 = np.array([0.,-1.])
+        # RB2 = np.array([np.sqrt(3.),1.])/2.
+        # RB3 = np.array([-np.sqrt(3.),1.])/2.
+        RB1 = np.array([1.,0.])
+        RB2 = np.array([-1.,np.sqrt(3.)])/2.
+        RB3 = np.array([-1.,-np.sqrt(3.)])/2.
         #
         RA1 = RB1 - RB3
         RA2 = RB2 - RB3
@@ -718,15 +761,19 @@ class BandModel:
         np.fill_diagonal(H_kk, H_kk.diagonal() + self.m.offset)
         return H_kk
 
+
 class EigenSolver:
 
     def __init__(self, model):
         self.model = model
 
-    def solve_k(self, k, get_spin=False):
+    def solve_k(self, k, get_spin=False, get_vec=False):
         hamiltonian = self.model.build_tb_hamiltonian_new(k[0],k[1])
         if get_spin is False:
-            return eigh(hamiltonian, eigvals_only=True)[11:33]
+            if get_vec:
+                return eigh(hamiltonian, eigvals_only=False)
+            else:
+                return eigh(hamiltonian, eigvals_only=True)[11:33]
         else:
             val, vec = eigh(hamiltonian, eigvals_only=False)
             vec2 = np.real(np.conjugate(vec)*vec)
@@ -736,21 +783,42 @@ class EigenSolver:
             comp = np.sum(vec2, axis=0)
             comp = np.sum(comp[:11], axis=0)-np.sum(comp[11:], axis=0)  # layer composition
             #return val, spin, comp
-            return val[11:33], spin[11:33], comp[11:33]
+            if get_vec:
+                return val[11:33], vec[:,11:33], spin[11:33]
+            else:
+                return val[11:33], spin[11:33], comp[11:33]
         
-    def solve_at_points(self, k_points, get_spin=False):
+    def solve_at_points(self, k_points, get_spin=False, get_vec=False):
         if get_spin is False:
-            return np.array([self.solve_k(k) for k in k_points])
+            if get_vec:
+                vals = []
+                vecs = []
+                for k in k_points:
+                    val, vec = self.solve_k(k, get_vec=True)
+                    vals.append(val)
+                    vecs.append(vec)
+                return np.array(vals), np.array(vecs)
+            else:
+                return np.array([self.solve_k(k) for k in k_points])
         else:
             vals = []
             spins = []
             comps = []
-            for k in k_points:
-                val, spin, comp = self.solve_k(k, get_spin=True)
-                vals.append(val)
-                spins.append(spin)
-                comps.append(comp)
-            return np.array(vals), np.array(spins), np.array(comps)
+            if get_vec: 
+                vecs = []
+                for k in k_points:
+                    val, vec, spin = self.solve_k(k, get_spin=True, get_vec=True)
+                    vals.append(val)
+                    vecs.append(vec)
+                    spins.append(spin)
+                return np.array(vals), np.array(vecs), np.array(spins)                
+            else:           
+                for k in k_points:
+                    val, spin, comp = self.solve_k(k, get_spin=True)
+                    vals.append(val)
+                    spins.append(spin)
+                    comps.append(comp)
+                return np.array(vals), np.array(spins), np.array(comps)
 
     def solve_BZ_path(self, get_spin=False):
         return self.solve_at_points(self.model.BZ_path, get_spin=get_spin)
