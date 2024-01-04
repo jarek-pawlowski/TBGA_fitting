@@ -785,6 +785,7 @@ class EigenSolver:
             #return val, spin, comp
             if get_vec:
                 return val[11:33], vec[:,11:33], spin[11:33]
+                #return val, vec, spin  # take all 44 bands
             else:
                 return val[11:33], spin[11:33], comp[11:33]
         

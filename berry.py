@@ -71,28 +71,43 @@ flake.create_reciprocal_lattice()
 
 #material.update_parameters(*parameters)
 material.set_parameters(*parameters)
-# bands, vecs, spins  = eigen_solver.solve_at_points(k_points=flake.nodes_k, get_spin=True, get_vec=True)
-# np.save('bands.npy', bands)
-# np.save('vecs.npy', vecs)
-# np.save('spins.npy', spins)
-bands = np.load('bands.npy')
-vecs = np.load('vecs.npy')  # to index eigenstates: [no_k_point,:,no_eigenstate]
-spins = np.load('spins.npy')
+bands, vecs, spins  = eigen_solver.solve_at_points(k_points=flake.nodes_k, get_spin=True, get_vec=True)
+np.save('bands.npy', bands)
+np.save('vecs.npy', vecs)
+np.save('spins.npy', spins)
+# bands = np.load('bands.npy')
+# vecs = np.load('vecs.npy')  # to index eigenstates: [no_k_point,:,no_eigenstate]
+# spins = np.load('spins.npy')
+
+def tensordot(a, b):
+    return np.tensordot(a.conj().T, b, axes=([1,0]))
+
+def FukuiU(a, b):
+    # (Eg. 16) in https://arxiv.org/pdf/cond-mat/0503172.pdf
+    return np.linalg.det(tensordot(a, b))
 
 #flake.center_reciprocal_lattice()
 berry = []
 no_band = 17
+#vec = vecs[:,:,no_band]
+vec2 = vecs[:,:,no_band:no_band+2]
+vec2 = vecs[:,:,:17]  # (Eq. 1.14) in https://arxiv.org/pdf/0907.2021.pdf
+#vec2 = vecs[:,:,11+17:]  # take all 44 bands
 for plaq in flake.plaquettes:
-    F = np.vdot(vecs[plaq[0],:,no_band], vecs[plaq[3],:,no_band])
-    F *= np.vdot(vecs[plaq[1],:,no_band], vecs[plaq[0],:,no_band])
-    F *= np.vdot(vecs[plaq[2],:,no_band], vecs[plaq[1],:,no_band])
-    F *= np.vdot(vecs[plaq[3],:,no_band], vecs[plaq[2],:,no_band])    
+    # F = np.vdot(vec[plaq[0]], vec[plaq[3]])
+    # F *= np.vdot(vec[plaq[1]], vec[plaq[0]])
+    # F *= np.vdot(vec[plaq[2]], vec[plaq[1]])
+    # F *= np.vdot(vec[plaq[3]], vec[plaq[2]])    
+    F = FukuiU(vec2[plaq[0]], vec2[plaq[3]])
+    F *= FukuiU(vec2[plaq[1]], vec2[plaq[0]])
+    F *= FukuiU(vec2[plaq[2]], vec2[plaq[1]])
+    F *= FukuiU(vec2[plaq[3]], vec2[plaq[2]])
     F = np.angle(F) 
     kx = flake.nodes_k[plaq[0],0]+flake.nodes_k[plaq[1],0]+flake.nodes_k[plaq[2],0]+flake.nodes_k[plaq[3],0]
     ky = flake.nodes_k[plaq[0],1]+flake.nodes_k[plaq[1],1]+flake.nodes_k[plaq[2],1]+flake.nodes_k[plaq[3],1]
     berry.append([kx,ky,F])
 berry = np.array(berry)
-berry[np.abs(berry[:,2])>.001]=0.
+berry[np.abs(berry[:,2])>.01]=0.
 
 plot = PlottingOnFlake(flake, directory='plots')
 plot.plot_berry_flake(berry)
