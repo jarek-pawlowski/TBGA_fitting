@@ -729,7 +729,7 @@ class BandModel:
         H_k[8+11,2+22+11]  = np.sqrt(3.0/2.0)*self.m.lambda_M_down
         H_k[9+11,5+22+11]  = self.m.lambda_X2_down/np.sqrt(2.0)
         H_k[10+11,6+22+11] = self.m.lambda_X2_down/np.sqrt(2.0)  
-        
+        """
         # zero odd
         H_k[7,7]               = 0.
         H_k[8,8]               = 0.
@@ -755,7 +755,7 @@ class BandModel:
         H_k[10+11+22,10+11+22] = 0.
         H_k[11+11+22,11+11+22] = 0.
         #
-        
+        """
         H_kk = H_k[1:,1:]
         H_kk += np.conjugate(np.triu(H_kk, k=1)).T
         np.fill_diagonal(H_kk, H_kk.diagonal() + self.m.offset)
