@@ -112,7 +112,7 @@ class EvoSearch:
                                 for bands in self.bands:
                                     for c in self.compostition_loss:
                                         for metric in self.metrics:
-                                            self.material.update_parameters(*np.concatenate([uniform(-b*rb, b*rb, self.no_params[0]),uniform(-b, b, self.no_params[1])]))
+                                            #self.material.update_parameters(*np.concatenate([uniform(-b*rb, b*rb, self.no_params[0]),uniform(-b, b, self.no_params[1])]))
                                             name = f"ek_target_evo_{s}_{p}_{m}_{r}_bands_{bands}_bound_{b}_ratio_bound_{rb}_comp_{c}_metric_{metric}"
                                             if name not in self.already_searched:
                                                 print(f"searching for: {name}")

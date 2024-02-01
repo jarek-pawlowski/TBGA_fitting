@@ -145,7 +145,7 @@ class Newmaterial:
     def __init__(self, lattice_const,
                  Ed_up,Ep1_up,Ep0_up,Vdp_sigma_up,Vdp_pi_up,Vdd_sigma_up,Vdd_pi_up,Vdd_delta_up,Vpp_sigma_up,Vpp_pi_up,Ep1_odd_up,Ep0_odd_up,Ed_odd_up,lambda_M_up,lambda_X2_up,
                  Ed_down,Ep1_down,Ep0_down,Vdp_sigma_down,Vdp_pi_down,Vdd_sigma_down,Vdd_pi_down,Vdd_delta_down,Vpp_sigma_down,Vpp_pi_down,Ep1_odd_down,Ep0_odd_down,Ed_odd_down,lambda_M_down,lambda_X2_down,
-                 Vpp_sigma_inter,Vpp_pi_inter,Vdd_sigma_inter,Vdd_pi_inter,Vdd_delta_inter,offset):
+                 Vpp_sigma_inter,Vpp_pi_inter,Vdd_sigma_inter,Vdd_pi_inter,Vdd_delta_inter,Vdp_sigma_inter):
         self.dim = 44
         self.lattice_const = lattice_const
         self.a0 = self.lattice_const
@@ -217,12 +217,13 @@ class Newmaterial:
         self.Vdd_sigma_inter = Vdd_sigma_inter
         self.Vdd_pi_inter = Vdd_pi_inter
         self.Vdd_delta_inter = Vdd_delta_inter
-        self.offset = offset
+        self.Vdp_sigma_inter = Vdp_sigma_inter
+        #self.offset = 0.
             
     def update_parameters(self, 
                           Ed_up,Ep1_up,Ep0_up,Vdp_sigma_up,Vdp_pi_up,Vdd_sigma_up,Vdd_pi_up,Vdd_delta_up,Vpp_sigma_up,Vpp_pi_up,Ep1_odd_up,Ep0_odd_up,Ed_odd_up,
                           Ed_down,Ep1_down,Ep0_down,Vdp_sigma_down,Vdp_pi_down,Vdd_sigma_down,Vdd_pi_down,Vdd_delta_down,Vpp_sigma_down,Vpp_pi_down,Ep1_odd_down,Ep0_odd_down,Ed_odd_down,
-                          Vpp_sigma_inter, Vpp_pi_inter, Vdd_sigma_inter, Vdd_pi_inter, Vdd_delta_inter, offset):
+                          Vpp_sigma_inter, Vpp_pi_inter, Vdd_sigma_inter, Vdd_pi_inter, Vdd_delta_inter, Vdp_sigma_inter):
         
         self.Ed_up = self.Ed_up_0 + Ed_up
         self.Ep1_up = self.Ep1_up_0 + Ep1_up
@@ -257,12 +258,13 @@ class Newmaterial:
         self.Vdd_sigma_inter = Vdd_sigma_inter
         self.Vdd_pi_inter = Vdd_pi_inter
         self.Vdd_delta_inter = Vdd_delta_inter
-        self.offset = offset
+        self.Vdp_sigma_inter = Vdp_sigma_inter
+        #self.offset = offset
         
     def set_parameters(self, 
-                       Ed_up,Ep1_up,Ep0_up,Vdp_sigma_up,Vdp_pi_up,Vdd_sigma_up,Vdd_pi_up,Vdd_delta_up,Vpp_sigma_up,Vpp_pi_up,Ep1_odd_up,Ep0_odd_up,Ed_odd_up,
-                       Ed_down,Ep1_down,Ep0_down,Vdp_sigma_down,Vdp_pi_down,Vdd_sigma_down,Vdd_pi_down,Vdd_delta_down,Vpp_sigma_down,Vpp_pi_down,Ep1_odd_down,Ep0_odd_down,Ed_odd_down,
-                       Vpp_sigma_inter, Vpp_pi_inter, Vdd_sigma_inter, Vdd_pi_inter, Vdd_delta_inter):
+                       Ed_up,Ep1_up,Ep0_up,Vdp_sigma_up,Vdp_pi_up,Vdd_sigma_up,Vdd_pi_up,Vdd_delta_up,Vpp_sigma_up,Vpp_pi_up,Ep1_odd_up,Ep0_odd_up,Ed_odd_up,  # 13
+                       Ed_down,Ep1_down,Ep0_down,Vdp_sigma_down,Vdp_pi_down,Vdd_sigma_down,Vdd_pi_down,Vdd_delta_down,Vpp_sigma_down,Vpp_pi_down,Ep1_odd_down,Ep0_odd_down,Ed_odd_down,  # 13
+                       Vpp_sigma_inter, Vpp_pi_inter, Vdd_sigma_inter, Vdd_pi_inter, Vdd_delta_inter, Vdp_sigma_inter):  # 6
         
         self.Ed_up = Ed_up
         self.Ep1_up = Ep1_up
@@ -297,7 +299,8 @@ class Newmaterial:
         self.Vdd_sigma_inter = Vdd_sigma_inter
         self.Vdd_pi_inter = Vdd_pi_inter
         self.Vdd_delta_inter = Vdd_delta_inter
-
+        self.Vdp_sigma_inter = Vdp_sigma_inter
+        
 
 class Lattice:
 
@@ -512,6 +515,7 @@ class BandModel:
         d_pp          = np.sqrt( (self.m.lattice_const**2.0 / 3.0) + (dz_pp**2.0) ) 
         dz_dd         = layer_dist
         d_dd          = np.sqrt( (self.m.lattice_const**2.0 / 3.0) + (dz_dd**2.0) ) 
+        dz_dp         = layer_dist - d2_up
         R1x_pp        = -d1/2.0 
         R1y_pp        = d1*np.sqrt(3.0)/2.0 
         R2x_pp        = -d1/2.0  
@@ -533,9 +537,14 @@ class BandModel:
         f_m1_up   = np.exp(-1.j*kx*d1) + np.exp(1.j*kx*d1/2.0)*np.exp(1.j*np.sqrt(3.0)*ky*d1/2.0)*np.exp(-1.j*2.0*np.pi/3.0) + np.exp(1.j*kx*d1/2.0)*np.exp(-1.j*np.sqrt(3.0)*ky*d1/2.0)*np.exp(1.j*2.0*np.pi/3.0) 
         f_0_up    = np.exp(-1.j*kx*d1) + np.exp(1.j*kx*d1/2.0)*np.exp(1.j*np.sqrt(3.0)*ky*d1/2.0)*np.exp(1.j*2.0*np.pi/3.0) + np.exp(1.j*kx*d1/2.0)*np.exp(-1.j*np.sqrt(3.0)*ky*d1/2.0)*np.exp(-1.j*2.0*np.pi/3.0) 
         f_p1_up   = np.exp(-1.j*kx*d1) + np.exp(1.j*kx*d1/2.0)*np.exp(1.j*np.sqrt(3.0)*ky*d1/2.0) + np.exp(1.j*kx*d1/2.0)*np.exp(-1.j*np.sqrt(3.0)*ky*d1/2.0) 
-        f_m1_down = np.exp(1.j*kx*d1) + np.exp(-1.j*kx*d1/2.0)*np.exp(1.j*np.sqrt(3.0)*ky*d1/2.0)*np.exp(1.j*2.0*np.pi/3.0) + np.exp(-1.j*kx*d1/2.0)*np.exp(-1.j*np.sqrt(3.0)*ky*d1/2.0)*np.exp(-1.j*2.0*np.pi/3.0) 
-        f_0_down  = np.exp(1.j*kx*d1) + np.exp(-1.j*kx*d1/2.0)*np.exp(1.j*np.sqrt(3.0)*ky*d1/2.0)*np.exp(-1.j*2.0*np.pi/3.0) + np.exp(-1.j*kx*d1/2.0)*np.exp(-1.j*np.sqrt(3.0)*ky*d1/2.0)*np.exp( 1.j*2.0*np.pi/3.0) 
-        f_p1_down  = np.exp(1.j*kx*d1) + np.exp(-1.j*kx*d1/2.0)*np.exp(1.j*np.sqrt(3.0)*ky*d1/2.0) + np.exp(-1.j*kx*d1/2.0)*np.exp(-1.j*np.sqrt(3.0)*ky*d1/2.0) 
+        # old Kasia's def:
+        # f_m1_down = np.exp(1.j*kx*d1) + np.exp(-1.j*kx*d1/2.0)*np.exp(1.j*np.sqrt(3.0)*ky*d1/2.0)*np.exp(1.j*2.0*np.pi/3.0) + np.exp(-1.j*kx*d1/2.0)*np.exp(-1.j*np.sqrt(3.0)*ky*d1/2.0)*np.exp(-1.j*2.0*np.pi/3.0) 
+        # f_0_down  = np.exp(1.j*kx*d1) + np.exp(-1.j*kx*d1/2.0)*np.exp(1.j*np.sqrt(3.0)*ky*d1/2.0)*np.exp(-1.j*2.0*np.pi/3.0) + np.exp(-1.j*kx*d1/2.0)*np.exp(-1.j*np.sqrt(3.0)*ky*d1/2.0)*np.exp( 1.j*2.0*np.pi/3.0) 
+        # f_p1_down  = np.exp(1.j*kx*d1) + np.exp(-1.j*kx*d1/2.0)*np.exp(1.j*np.sqrt(3.0)*ky*d1/2.0) + np.exp(-1.j*kx*d1/2.0)*np.exp(-1.j*np.sqrt(3.0)*ky*d1/2.0) 
+        # for down just apply kx -> -kx, ky -> -ky
+        f_m1_down   = np.exp(1.j*kx*d1) + np.exp(-1.j*kx*d1/2.0)*np.exp(-1.j*np.sqrt(3.0)*ky*d1/2.0)*np.exp(-1.j*2.0*np.pi/3.0) + np.exp(-1.j*kx*d1/2.0)*np.exp(1.j*np.sqrt(3.0)*ky*d1/2.0)*np.exp(1.j*2.0*np.pi/3.0) 
+        f_0_down    = np.exp(1.j*kx*d1) + np.exp(-1.j*kx*d1/2.0)*np.exp(-1.j*np.sqrt(3.0)*ky*d1/2.0)*np.exp(1.j*2.0*np.pi/3.0) + np.exp(-1.j*kx*d1/2.0)*np.exp(1.j*np.sqrt(3.0)*ky*d1/2.0)*np.exp(-1.j*2.0*np.pi/3.0) 
+        f_p1_down   = np.exp(1.j*kx*d1) + np.exp(-1.j*kx*d1/2.0)*np.exp(-1.j*np.sqrt(3.0)*ky*d1/2.0) + np.exp(-1.j*kx*d1/2.0)*np.exp(1.j*np.sqrt(3.0)*ky*d1/2.0) 
         # layer up
         V1_up  =  1.0/np.sqrt(2.0)*d1/d_up*( np.sqrt(3.0)/2.0*self.m.Vdp_sigma_up*((d2_up/d_up)**(2.0)-1) - self.m.Vdp_pi_up*((d2_up/d_up)**(2.0)+1) ) 
         V2_up  =  0.5*( np.sqrt(3.0)*self.m.Vdp_sigma_up-2.0*self.m.Vdp_pi_up )*(d2_up/d_up)*(d1/d_up)**(2.0) 
@@ -634,26 +643,177 @@ class BandModel:
         H_k[8,9]   =  V7_up*f_m1_up 
         H_k[8,10]  =  V8_up*f_0_up 
         H_k[8,11]  = -V6_up*f_p1_up 
-        H_k[12,15] =  V1_down*f_m1_down 
+        # layer down: 
+        H_k[12,15] =  V1_down*f_m1_down*(-1.)
         H_k[12,16] = -V2_down*f_0_down
-        H_k[12,17] =  V3_down*f_p1_down 
-        H_k[13,15] = -V4_down*f_0_down
+        H_k[12,17] =  V3_down*f_p1_down*(-1.)
+        H_k[13,15] = -V4_down*f_0_down*(-1.)
         H_k[13,16] = -V5_down*f_p1_down 
-        H_k[13,17] =  V4_down*f_m1_down 
-        H_k[14,15] = -V3_down*f_p1_down 
+        H_k[13,17] =  V4_down*f_m1_down*(-1.)
+        H_k[14,15] = -V3_down*f_p1_down*(-1.)
         H_k[14,16] = -V2_down*f_m1_down 
-        H_k[14,17] = -V1_down*f_0_down
+        H_k[14,17] = -V1_down*f_0_down*(-1.)
         H_k[18,20] = -V6_down*f_p1_down 
-        H_k[18,21] = -V8_down*f_m1_down 
+        H_k[18,21] = -V8_down*f_m1_down*(-1.) 
         H_k[18,22] =  V7_down*f_0_down
         H_k[19,20] =  V7_down*f_m1_down 
-        H_k[19,21] =  V8_down*f_0_down
+        H_k[19,21] =  V8_down*f_0_down*(-1.)
         H_k[19,22] = -V6_down*f_p1_down 
-        # layer interactions
-        H_k[2,13]  = -0.5*W13*h1_dd
-        H_k[5,16]  = -0.5*W12*h1_pp
-        H_k[1,14] = h2_dd*W14 + h1_dd*W15 + h3_dd*W16
-        H_k[3,12] = np.conjugate(H_k[1,14])   
+        # layer interactions, old ones
+        # H_k[2,13]  = -0.5*W13*h1_dd
+        # H_k[5,16]  = -0.5*W12*h1_pp
+        # H_k[1,14] = h2_dd*W14 + h1_dd*W15 + h3_dd*W16
+        # H_k[3,12] = np.conjugate(H_k[1,14])   
+        # --- layer interactions following Mathematica ---
+        """
+        # d-d
+        H_k[1,12] =  (1.0/(8.0*(d_dd**4.0))) * np.exp(-0.5*1.j*d1*(2.0*kx+np.sqrt(3.0)*ky)) * (np.exp(1.j*3.0*d1*kx/2.0) + np.exp(0.5*1.j*np.sqrt(3.0)*d1*ky) + np.exp(0.5*1.j*d1*(3.0*kx+2.0*np.sqrt(3.0)*ky)) ) * ( 4.0*((d1**4.0)+2.0*(d1**2.0)*(dz_dd**2.0))*self.m.Vdd_pi_inter + ((d1**4.0)+8.0*(d1**2.0)*(dz_dd**2.0)+8.0*(dz_dd**4.0))*self.m.Vdd_delta_inter + 3.0*(d1**4.0)*self.m.Vdd_sigma_inter )
+        #H_k[1,13] = np.sqrt(3.0/2.0) * (1.0/(8.0*(d_dd**4.0))) * np.exp(-0.5*1.j*d1*(2.0*kx+np.sqrt(3.0)*ky)) * ((-1.0-1.j*np.sqrt(3.0))*np.exp(1.j*3.0*d1*kx/2.0) + 2.0*np.exp(0.5*1.j*np.sqrt(3.0)*d1*ky) + (-1.0+1.j*np.sqrt(3.0))*np.exp(0.5*1.j*d1*(3.0*kx+2.0*np.sqrt(3.0)*ky)) ) * ( -4.0*(dz_dd**2.0)*self.m.Vdd_pi_inter + ((d1**2.0)+2.0*(dz_dd**2.0))*self.m.Vdd_delta_inter - ((d1**2.0)-2.0*(dz_dd**2.0))*self.m.Vdd_sigma_inter )
+        #H_k[1,14] =  (1.0/(16.0*(d_dd**4.0)))*(d1**4.0) * np.exp(-0.5*1.j*d1*(2.0*kx+np.sqrt(3.0)*ky)) * ((1.0-1.j*np.sqrt(3.0))*np.exp(1.j*3.0*d1*kx/2.0) - 2.0*np.exp(0.5*1.j*np.sqrt(3.0)*d1*ky) + (1.0+1.j*np.sqrt(3.0))*np.exp(0.5*1.j*d1*(3.0*kx+2.0*np.sqrt(3.0)*ky)) ) * ( 4.0*self.m.Vdd_pi_inter - self.m.Vdd_delta_inter - 3.0*self.m.Vdd_sigma_inter )
+        #H_k[2,12] = np.sqrt(3.0/2.0)*(1.0/(8.0*(d_dd**4.0))) * np.exp(-0.5*1.j*d1*(2.0*kx+np.sqrt(3.0)*ky)) * ((-1.0+1.j*np.sqrt(3.0))*np.exp(1.j*3.0*d1*kx/2.0) + 2.0*np.exp(0.5*1.j*np.sqrt(3.0)*d1*ky) + (-1.0-1.j*np.sqrt(3.0))*np.exp(0.5*1.j*d1*(3.0*kx+2.0*np.sqrt(3.0)*ky)) ) * ( -4.0*(dz_dd**2.0)*self.m.Vdd_pi_inter + ((d1**2.0)+2.0*(dz_dd**2.0))*self.m.Vdd_delta_inter - ((d1**2.0)-2.0*(dz_dd**2.0))*self.m.Vdd_sigma_inter )
+        H_k[2,13] = -0.5*W13*h1_dd
+        #H_k[2,14] =  H_k[1,13]
+        #H_k[3,12] =  (1.0/(16.0*(d_dd**4.0)))*(d1**4.0) * np.exp(-0.5*1.j*d1*(2.0*kx+np.sqrt(3.0)*ky)) * ((1.0+1.j*np.sqrt(3.0))*np.exp(1.j*3.0*d1*kx/2.0) - 2.0*np.exp(0.5*1.j*np.sqrt(3.0)*d1*ky) + (1.0-1.j*np.sqrt(3.0))*np.exp(0.5*1.j*d1*(3.0*kx+2.0*np.sqrt(3.0)*ky)) ) * ( 4.0*self.m.Vdd_pi_inter - self.m.Vdd_delta_inter - 3.0*self.m.Vdd_sigma_inter )
+        #H_k[3,13] =  H_k[2,12]
+        H_k[3,14] =  H_k[1,12]
+        # p-p
+        H_k[4,15] = ( 1.0/(4.0*(d_pp**2.0)) ) * np.exp(-0.5*1.j*d1*(kx+np.sqrt(3.0)*ky)) * ( 1.0 + np.exp(1.j*np.sqrt(3.0)*d1*ky) + np.exp(0.5*1.j*d1*(3.0*kx+np.sqrt(3.0)*ky)) ) * ( ((d1**2.0)+2.0*(dz_pp**2.0))*self.m.Vpp_pi_inter + (d1**2.0)*self.m.Vpp_sigma_inter )
+        H_k[4,16] = ( 1.0/(4.0*np.sqrt(2.0)*(d_pp**2.0)) ) * d1 * dz_pp * np.exp(-0.5*1.j*d1*(kx+np.sqrt(3.0)*ky)) * ( -1.0 - 1.j*np.sqrt(3.0) + (-1.0+1.j*np.sqrt(3.0))*np.exp(1.j*np.sqrt(3.0)*d1*ky) + 2.0*np.exp(0.5*1.j*d1*(3.0*kx+np.sqrt(3.0)*ky)) ) * ( self.m.Vpp_pi_inter - self.m.Vpp_sigma_inter )
+        #H_k[4,17] = ( 1.0/(8.0*(d_pp**2.0)) ) * (d1**2.0) * np.exp(-0.5*1.j*d1*(kx+np.sqrt(3.0)*ky)) * ( -1.0 + 1.j*np.sqrt(3.0) + (-1.0-1.j*np.sqrt(3.0))*np.exp(1.j*np.sqrt(3.0)*d1*ky) + 2.0*np.exp(0.5*1.j*d1*(3.0*kx+np.sqrt(3.0)*ky)) ) * ( self.m.Vpp_pi_inter - self.m.Vpp_sigma_inter )
+        H_k[5,15] = ( 1.0/(4.0*np.sqrt(2.0)*(d_pp**2.0)) ) * d1 * dz_pp * np.exp(-0.5*1.j*d1*(kx+np.sqrt(3.0)*ky)) * (  1.0 - 1.j*np.sqrt(3.0) + ( 1.0+1.j*np.sqrt(3.0))*np.exp(1.j*np.sqrt(3.0)*d1*ky) - 2.0*np.exp(0.5*1.j*d1*(3.0*kx+np.sqrt(3.0)*ky)) ) * ( self.m.Vpp_pi_inter - self.m.Vpp_sigma_inter )
+        H_k[5,16] = -0.5*W12*h1_pp
+        H_k[5,17] = H_k[4,16]
+        #H_k[6,15] = ( 1.0/(8.0*(d_pp**2.0)) ) * (d1**2.0) * np.exp(-0.5*1.j*d1*(kx+np.sqrt(3.0)*ky)) * ( -1.0 - 1.j*np.sqrt(3.0) + (-1.0+1.j*np.sqrt(3.0))*np.exp(1.j*np.sqrt(3.0)*d1*ky) + 2.0*np.exp(0.5*1.j*d1*(3.0*kx+np.sqrt(3.0)*ky)) ) * ( self.m.Vpp_pi_inter - self.m.Vpp_sigma_inter )
+        H_k[6,16] = H_k[5,15]
+        H_k[6,17] = H_k[4,15]
+        # d-p
+        H_k[2,16] = self.m.Vdp_sigma_inter/np.sqrt(2.0)
+        H_k[5,13] = H_k[2,16]
+        """
+        # automatic export:
+        H_k[1,12]=((np.exp((3*1.j*d1*kx)/2.) + np.exp((1.j*np.sqrt(3)*d1*ky)/2.) + np.exp((1.j*d1*(3*kx + 2*np.sqrt(3)*ky))/2.))*(4*(d1**4 + 2*d1**2*dz_dd**2)*self.m.Vdd_pi_inter + (d1**4 + 8*d1**2*dz_dd**2 + 8*dz_dd**4)*self.m.Vdd_delta_inter + 3*d1**4*self.m.Vdd_sigma_inter))/(8.*(d1**2 + dz_dd**2)**2*np.exp((1.j*d1*(2*kx + np.sqrt(3)*ky))/2.))
+        # H_k[1,13]=(np.sqrt(1.5)*d1**2*((-1 - 1.j*np.sqrt(3))*np.exp((3*1.j*d1*kx)/2.) + 2*np.exp((1.j*np.sqrt(3)*d1*ky)/2.) + 1.j*(1.j + np.sqrt(3))*np.exp((1.j*d1*(3*kx + 2*np.sqrt(3)*ky))/2.))*(-4*dz_dd**2*self.m.Vdd_pi_inter + (d1**2 + 2*dz_dd**2)*self.m.Vdd_delta_inter - (d1**2 - 2*dz_dd**2)*self.m.Vdd_sigma_inter))/(8.*(d1**2 + dz_dd**2)**2*np.exp((1.j*d1*(2*kx + np.sqrt(3)*ky))/2.))
+        H_k[1,14]=(d1**4*((1 - 1.j*np.sqrt(3))*np.exp((3*1.j*d1*kx)/2.) - 2*np.exp((1.j*np.sqrt(3)*d1*ky)/2.) + (1 + 1.j*np.sqrt(3))*np.exp((1.j*d1*(3*kx + 2*np.sqrt(3)*ky))/2.))*(4*self.m.Vdd_pi_inter - self.m.Vdd_delta_inter - 3*self.m.Vdd_sigma_inter))/(16.*(d1**2 + dz_dd**2)**2*np.exp((1.j*d1*(2*kx + np.sqrt(3)*ky))/2.))
+        # H_k[1,15]=0
+        # H_k[1,16]=0
+        # H_k[1,17]=0
+        #H_k[1,18]=(d1*dz_dd*((1 - 1.j*np.sqrt(3))*np.exp((3*1.j*d1*kx)/2.) - 2*np.exp((1.j*np.sqrt(3)*d1*ky)/2.) + (1 + 1.j*np.sqrt(3))*np.exp((1.j*d1*(3*kx + 2*np.sqrt(3)*ky))/2.))*(-4*dz_dd**2*self.m.Vdd_pi_inter + (3*d1**2 + 4*dz_dd**2)*self.m.Vdd_delta_inter - 3*d1**2*self.m.Vdd_sigma_inter))/(8.*(d1**2 + dz_dd**2)**2*np.exp((1.j*d1*(2*kx + np.sqrt(3)*ky))/2.))
+        #H_k[1,19]=(d1**3*dz_dd*(np.exp((3*1.j*d1*kx)/2.) + np.exp((1.j*np.sqrt(3)*d1*ky)/2.) + np.exp((1.j*d1*(3*kx + 2*np.sqrt(3)*ky))/2.))*(4*self.m.Vdd_pi_inter - self.m.Vdd_delta_inter - 3*self.m.Vdd_sigma_inter))/(4.*(d1**2 + dz_dd**2)**2*np.exp((1.j*d1*(2*kx + np.sqrt(3)*ky))/2.))
+        #H_k[1,20]=0
+        #H_k[1,21]=0
+        #H_k[1,22]=0
+        # H_k[2,12]=(np.sqrt(1.5)*d1**2*(1.j*(1.j + np.sqrt(3))*np.exp((3*1.j*d1*kx)/2.) + 2*np.exp((1.j*np.sqrt(3)*d1*ky)/2.) + (-1 - 1.j*np.sqrt(3))*np.exp((1.j*d1*(3*kx + 2*np.sqrt(3)*ky))/2.))*(-4*dz_dd**2*self.m.Vdd_pi_inter + (d1**2 + 2*dz_dd**2)*self.m.Vdd_delta_inter - (d1**2 - 2*dz_dd**2)*self.m.Vdd_sigma_inter))/(8.*(d1**2 + dz_dd**2)**2*np.exp((1.j*d1*(2*kx + np.sqrt(3)*ky))/2.))
+        H_k[2,13]=((np.exp((3*1.j*d1*kx)/2.) + np.exp((1.j*np.sqrt(3)*d1*ky)/2.) + np.exp((1.j*d1*(3*kx + 2*np.sqrt(3)*ky))/2.))*(12*d1**2*dz_dd**2*self.m.Vdd_pi_inter + 3*d1**4*self.m.Vdd_delta_inter + (d1**2 - 2*dz_dd**2)**2*self.m.Vdd_sigma_inter))/(4.*(d1**2 + dz_dd**2)**2*np.exp((1.j*d1*(2*kx + np.sqrt(3)*ky))/2.))
+        # H_k[2,14]=(np.sqrt(1.5)*d1**2*((-1 - 1.j*np.sqrt(3))*np.exp((3*1.j*d1*kx)/2.) + 2*np.exp((1.j*np.sqrt(3)*d1*ky)/2.) + 1.j*(1.j + np.sqrt(3))*np.exp((1.j*d1*(3*kx + 2*np.sqrt(3)*ky))/2.))*(-4*dz_dd**2*self.m.Vdd_pi_inter + (d1**2 + 2*dz_dd**2)*self.m.Vdd_delta_inter - (d1**2 - 2*dz_dd**2)*self.m.Vdd_sigma_inter))/(8.*(d1**2 + dz_dd**2)**2*np.exp((1.j*d1*(2*kx + np.sqrt(3)*ky))/2.))
+        # H_k[2,15]=0
+        H_k[2,16]=(dz_dp*self.m.Vdp_sigma_inter)/(np.sqrt(2)*np.sqrt(dz_dp**2))
+        # H_k[2,17]=0
+        #H_k[2,18]=(np.sqrt(1.5)*d1*dz_dd*((-1 - 1.j*np.sqrt(3))*np.exp((3*1.j*d1*kx)/2.) + 2*np.exp((1.j*np.sqrt(3)*d1*ky)/2.) + 1.j*(1.j + np.sqrt(3))*np.exp((1.j*d1*(3*kx + 2*np.sqrt(3)*ky))/2.))*(2*(d1 - dz_dd)*(d1 + dz_dd)*self.m.Vdd_pi_inter - d1**2*self.m.Vdd_delta_inter - (d1**2 - 2*dz_dd**2)*self.m.Vdd_sigma_inter))/(4.*(d1**2 + dz_dd**2)**2*np.exp((1.j*d1*(2*kx + np.sqrt(3)*ky))/2.))
+        #H_k[2,19]=(np.sqrt(1.5)*d1*dz_dd*((1 - 1.j*np.sqrt(3))*np.exp((3*1.j*d1*kx)/2.) - 2*np.exp((1.j*np.sqrt(3)*d1*ky)/2.) + (1 + 1.j*np.sqrt(3))*np.exp((1.j*d1*(3*kx + 2*np.sqrt(3)*ky))/2.))*(2*(d1 - dz_dd)*(d1 + dz_dd)*self.m.Vdd_pi_inter - d1**2*self.m.Vdd_delta_inter - (d1**2 - 2*dz_dd**2)*self.m.Vdd_sigma_inter))/(4.*(d1**2 + dz_dd**2)**2*np.exp((1.j*d1*(2*kx + np.sqrt(3)*ky))/2.))
+        #H_k[2,20]=0
+        #H_k[2,21]=(dz_dp*self.m.Vdp_sigma_inter)/(np.sqrt(2)*np.sqrt(dz_dp**2))
+        #H_k[2,22]=0
+        H_k[3,12]=(d1**4*((1 + 1.j*np.sqrt(3))*np.exp((3*1.j*d1*kx)/2.) - 2*np.exp((1.j*np.sqrt(3)*d1*ky)/2.) + (1 - 1.j*np.sqrt(3))*np.exp((1.j*d1*(3*kx + 2*np.sqrt(3)*ky))/2.))*(4*self.m.Vdd_pi_inter - self.m.Vdd_delta_inter - 3*self.m.Vdd_sigma_inter))/(16.*(d1**2 + dz_dd**2)**2*np.exp((1.j*d1*(2*kx + np.sqrt(3)*ky))/2.))
+        # H_k[3,13]=(np.sqrt(1.5)*d1**2*(1.j*(1.j + np.sqrt(3))*np.exp((3*1.j*d1*kx)/2.) + 2*np.exp((1.j*np.sqrt(3)*d1*ky)/2.) + (-1 - 1.j*np.sqrt(3))*np.exp((1.j*d1*(3*kx + 2*np.sqrt(3)*ky))/2.))*(-4*dz_dd**2*self.m.Vdd_pi_inter + (d1**2 + 2*dz_dd**2)*self.m.Vdd_delta_inter - (d1**2 - 2*dz_dd**2)*self.m.Vdd_sigma_inter))/(8.*(d1**2 + dz_dd**2)**2*np.exp((1.j*d1*(2*kx + np.sqrt(3)*ky))/2.))
+        H_k[3,14]=((np.exp((3*1.j*d1*kx)/2.) + np.exp((1.j*np.sqrt(3)*d1*ky)/2.) + np.exp((1.j*d1*(3*kx + 2*np.sqrt(3)*ky))/2.))*(4*(d1**4 + 2*d1**2*dz_dd**2)*self.m.Vdd_pi_inter + (d1**4 + 8*d1**2*dz_dd**2 + 8*dz_dd**4)*self.m.Vdd_delta_inter + 3*d1**4*self.m.Vdd_sigma_inter))/(8.*(d1**2 + dz_dd**2)**2*np.exp((1.j*d1*(2*kx + np.sqrt(3)*ky))/2.))
+        # H_k[3,15]=0
+        # H_k[3,16]=0
+        # H_k[3,17]=0
+        #H_k[3,18]=-0.25*(d1**3*dz_dd*(np.exp((3*1.j*d1*kx)/2.) + np.exp((1.j*np.sqrt(3)*d1*ky)/2.) + np.exp((1.j*d1*(3*kx + 2*np.sqrt(3)*ky))/2.))*(4*self.m.Vdd_pi_inter - self.m.Vdd_delta_inter - 3*self.m.Vdd_sigma_inter))/((d1**2 + dz_dd**2)**2*np.exp((1.j*d1*(2*kx + np.sqrt(3)*ky))/2.))
+        #H_k[3,19]=(d1*dz_dd*((1 + 1.j*np.sqrt(3))*np.exp((3*1.j*d1*kx)/2.) - 2*np.exp((1.j*np.sqrt(3)*d1*ky)/2.) + (1 - 1.j*np.sqrt(3))*np.exp((1.j*d1*(3*kx + 2*np.sqrt(3)*ky))/2.))*(4*dz_dd**2*self.m.Vdd_pi_inter - (3*d1**2 + 4*dz_dd**2)*self.m.Vdd_delta_inter + 3*d1**2*self.m.Vdd_sigma_inter))/(8.*(d1**2 + dz_dd**2)**2*np.exp((1.j*d1*(2*kx + np.sqrt(3)*ky))/2.))
+        #H_k[3,20]=0
+        #H_k[3,21]=0
+        #H_k[3,22]=0
+        # H_k[4,12]=0
+        # H_k[4,13]=0
+        # H_k[4,14]=0
+        # H_k[4,15]=((1 + np.exp(1.j*np.sqrt(3)*d1*ky) + np.exp((1.j*d1*(3*kx + np.sqrt(3)*ky))/2.))*((d1**2 + 2*dz_pp**2)*self.m.Vpp_pi_inter + d1**2*self.m.Vpp_sigma_inter))/(4.*(d1**2 + dz_pp**2)*np.exp((1.j*d1*(kx + np.sqrt(3)*ky))/2.))
+        # H_k[4,16]=(d1*dz_pp*(-1 - 1.j*np.sqrt(3) + 1.j*(1.j + np.sqrt(3))*np.exp(1.j*np.sqrt(3)*d1*ky) + 2*np.exp((1.j*d1*(3*kx + np.sqrt(3)*ky))/2.))*(self.m.Vpp_pi_inter - self.m.Vpp_sigma_inter))/(4.*np.sqrt(2)*(d1**2 + dz_pp**2)*np.exp((1.j*d1*(kx + np.sqrt(3)*ky))/2.))
+        # H_k[4,17]=(d1**2*(-1 + 1.j*np.sqrt(3) + (-1 - 1.j*np.sqrt(3))*np.exp(1.j*np.sqrt(3)*d1*ky) + 2*np.exp((1.j*d1*(3*kx + np.sqrt(3)*ky))/2.))*(self.m.Vpp_pi_inter - self.m.Vpp_sigma_inter))/(8.*(d1**2 + dz_pp**2)*np.exp((1.j*d1*(kx + np.sqrt(3)*ky))/2.))
+        #H_k[4,18]=-((dz_dp*Subscript(V,d*p*Pi))/(np.sqrt(2)*np.sqrt(dz_dp**2)))
+        #H_k[4,19]=0
+        #H_k[4,20]=((1 + np.exp(1.j*np.sqrt(3)*d1*ky) + np.exp((1.j*d1*(3*kx + np.sqrt(3)*ky))/2.))*((d1**2 + 2*dz_pp**2)*self.m.Vpp_pi_inter + d1**2*self.m.Vpp_sigma_inter))/(4.*(d1**2 + dz_pp**2)*np.exp((1.j*d1*(kx + np.sqrt(3)*ky))/2.))
+        #H_k[4,21]=(d1*dz_pp*(-1 - 1.j*np.sqrt(3) + 1.j*(1.j + np.sqrt(3))*np.exp(1.j*np.sqrt(3)*d1*ky) + 2*np.exp((1.j*d1*(3*kx + np.sqrt(3)*ky))/2.))*(self.m.Vpp_pi_inter - self.m.Vpp_sigma_inter))/(4.*np.sqrt(2)*(d1**2 + dz_pp**2)*np.exp((1.j*d1*(kx + np.sqrt(3)*ky))/2.))
+        #H_k[4,22]=(d1**2*(-1 + 1.j*np.sqrt(3) + (-1 - 1.j*np.sqrt(3))*np.exp(1.j*np.sqrt(3)*d1*ky) + 2*np.exp((1.j*d1*(3*kx + np.sqrt(3)*ky))/2.))*(self.m.Vpp_pi_inter - self.m.Vpp_sigma_inter))/(8.*(d1**2 + dz_pp**2)*np.exp((1.j*d1*(kx + np.sqrt(3)*ky))/2.))
+        # H_k[5,12]=0
+        H_k[5,13]=(dz_dp*self.m.Vdp_sigma_inter)/(np.sqrt(2)*np.sqrt(dz_dp**2))
+        # H_k[5,14]=0
+        # H_k[5,15]=(d1*dz_pp*(1 - 1.j*np.sqrt(3) + (1 + 1.j*np.sqrt(3))*np.exp(1.j*np.sqrt(3)*d1*ky) - 2*np.exp((1.j*d1*(3*kx + np.sqrt(3)*ky))/2.))*(self.m.Vpp_pi_inter - self.m.Vpp_sigma_inter))/(4.*np.sqrt(2)*(d1**2 + dz_pp**2)*np.exp((1.j*d1*(kx + np.sqrt(3)*ky))/2.))
+        H_k[5,16]=-0.5*((1 + np.exp(1.j*np.sqrt(3)*d1*ky) + np.exp((1.j*d1*(3*kx + np.sqrt(3)*ky))/2.))*(d1**2*self.m.Vpp_pi_inter + dz_pp**2*self.m.Vpp_sigma_inter))/((d1**2 + dz_pp**2)*np.exp((1.j*d1*(kx + np.sqrt(3)*ky))/2.))
+        # H_k[5,17]=(d1*dz_pp*(-1 - 1.j*np.sqrt(3) + 1.j*(1.j + np.sqrt(3))*np.exp(1.j*np.sqrt(3)*d1*ky) + 2*np.exp((1.j*d1*(3*kx + np.sqrt(3)*ky))/2.))*(self.m.Vpp_pi_inter - self.m.Vpp_sigma_inter))/(4.*np.sqrt(2)*(d1**2 + dz_pp**2)*np.exp((1.j*d1*(kx + np.sqrt(3)*ky))/2.))
+        #H_k[5,18]=0
+        #H_k[5,19]=0
+        #H_k[5,20]=(d1*dz_pp*(1 - 1.j*np.sqrt(3) + (1 + 1.j*np.sqrt(3))*np.exp(1.j*np.sqrt(3)*d1*ky) - 2*np.exp((1.j*d1*(3*kx + np.sqrt(3)*ky))/2.))*(self.m.Vpp_pi_inter - self.m.Vpp_sigma_inter))/(4.*np.sqrt(2)*(d1**2 + dz_pp**2)*np.exp((1.j*d1*(kx + np.sqrt(3)*ky))/2.))
+        #H_k[5,21]=-0.5*((1 + np.exp(1.j*np.sqrt(3)*d1*ky) + np.exp((1.j*d1*(3*kx + np.sqrt(3)*ky))/2.))*(d1**2*self.m.Vpp_pi_inter + dz_pp**2*self.m.Vpp_sigma_inter))/((d1**2 + dz_pp**2)*np.exp((1.j*d1*(kx + np.sqrt(3)*ky))/2.))
+        #H_k[5,22]=(d1*dz_pp*(-1 - 1.j*np.sqrt(3) + 1.j*(1.j + np.sqrt(3))*np.exp(1.j*np.sqrt(3)*d1*ky) + 2*np.exp((1.j*d1*(3*kx + np.sqrt(3)*ky))/2.))*(self.m.Vpp_pi_inter - self.m.Vpp_sigma_inter))/(4.*np.sqrt(2)*(d1**2 + dz_pp**2)*np.exp((1.j*d1*(kx + np.sqrt(3)*ky))/2.))
+        # H_k[6,12]=0
+        # H_k[6,13]=0
+        # H_k[6,14]=0
+        # H_k[6,15]=(d1**2*(-1 - 1.j*np.sqrt(3) + 1.j*(1.j + np.sqrt(3))*np.exp(1.j*np.sqrt(3)*d1*ky) + 2*np.exp((1.j*d1*(3*kx + np.sqrt(3)*ky))/2.))*(self.m.Vpp_pi_inter - self.m.Vpp_sigma_inter))/(8.*(d1**2 + dz_pp**2)*np.exp((1.j*d1*(kx + np.sqrt(3)*ky))/2.))
+        # H_k[6,16]=(d1*dz_pp*(1 - 1.j*np.sqrt(3) + (1 + 1.j*np.sqrt(3))*np.exp(1.j*np.sqrt(3)*d1*ky) - 2*np.exp((1.j*d1*(3*kx + np.sqrt(3)*ky))/2.))*(self.m.Vpp_pi_inter - self.m.Vpp_sigma_inter))/(4.*np.sqrt(2)*(d1**2 + dz_pp**2)*np.exp((1.j*d1*(kx + np.sqrt(3)*ky))/2.))
+        # H_k[6,17]=((1 + np.exp(1.j*np.sqrt(3)*d1*ky) + np.exp((1.j*d1*(3*kx + np.sqrt(3)*ky))/2.))*((d1**2 + 2*dz_pp**2)*self.m.Vpp_pi_inter + d1**2*self.m.Vpp_sigma_inter))/(4.*(d1**2 + dz_pp**2)*np.exp((1.j*d1*(kx + np.sqrt(3)*ky))/2.))
+        #H_k[6,18]=0
+        #H_k[6,19]=-((dz_dp*Subscript(V,d*p*Pi))/(np.sqrt(2)*np.sqrt(dz_dp**2)))
+        #H_k[6,20]=(d1**2*(-1 - 1.j*np.sqrt(3) + 1.j*(1.j + np.sqrt(3))*np.exp(1.j*np.sqrt(3)*d1*ky) + 2*np.exp((1.j*d1*(3*kx + np.sqrt(3)*ky))/2.))*(self.m.Vpp_pi_inter - self.m.Vpp_sigma_inter))/(8.*(d1**2 + dz_pp**2)*np.exp((1.j*d1*(kx + np.sqrt(3)*ky))/2.))
+        #H_k[6,21]=(d1*dz_pp*(1 - 1.j*np.sqrt(3) + (1 + 1.j*np.sqrt(3))*np.exp(1.j*np.sqrt(3)*d1*ky) - 2*np.exp((1.j*d1*(3*kx + np.sqrt(3)*ky))/2.))*(self.m.Vpp_pi_inter - self.m.Vpp_sigma_inter))/(4.*np.sqrt(2)*(d1**2 + dz_pp**2)*np.exp((1.j*d1*(kx + np.sqrt(3)*ky))/2.))
+        #H_k[6,22]=((1 + np.exp(1.j*np.sqrt(3)*d1*ky) + np.exp((1.j*d1*(3*kx + np.sqrt(3)*ky))/2.))*((d1**2 + 2*dz_pp**2)*self.m.Vpp_pi_inter + d1**2*self.m.Vpp_sigma_inter))/(4.*(d1**2 + dz_pp**2)*np.exp((1.j*d1*(kx + np.sqrt(3)*ky))/2.))
+        #H_k[7,12]=(d1*dz_dd*((1 + 1.j*np.sqrt(3))*np.exp((3*1.j*d1*kx)/2.) - 2*np.exp((1.j*np.sqrt(3)*d1*ky)/2.) + (1 - 1.j*np.sqrt(3))*np.exp((1.j*d1*(3*kx + 2*np.sqrt(3)*ky))/2.))*(-4*dz_dd**2*self.m.Vdd_pi_inter + (3*d1**2 + 4*dz_dd**2)*self.m.Vdd_delta_inter - 3*d1**2*self.m.Vdd_sigma_inter))/(8.*(d1**2 + dz_dd**2)**2*np.exp((1.j*d1*(2*kx + np.sqrt(3)*ky))/2.))
+        #H_k[7,13]=(np.sqrt(1.5)*d1*dz_dd*(1.j*(1.j + np.sqrt(3))*np.exp((3*1.j*d1*kx)/2.) + 2*np.exp((1.j*np.sqrt(3)*d1*ky)/2.) + (-1 - 1.j*np.sqrt(3))*np.exp((1.j*d1*(3*kx + 2*np.sqrt(3)*ky))/2.))*(2*(d1 - dz_dd)*(d1 + dz_dd)*self.m.Vdd_pi_inter - d1**2*self.m.Vdd_delta_inter - (d1**2 - 2*dz_dd**2)*self.m.Vdd_sigma_inter))/(4.*(d1**2 + dz_dd**2)**2*np.exp((1.j*d1*(2*kx + np.sqrt(3)*ky))/2.))
+        #H_k[7,14]=-0.25*(d1**3*dz_dd*(np.exp((3*1.j*d1*kx)/2.) + np.exp((1.j*np.sqrt(3)*d1*ky)/2.) + np.exp((1.j*d1*(3*kx + 2*np.sqrt(3)*ky))/2.))*(4*self.m.Vdd_pi_inter - self.m.Vdd_delta_inter - 3*self.m.Vdd_sigma_inter))/((d1**2 + dz_dd**2)**2*np.exp((1.j*d1*(2*kx + np.sqrt(3)*ky))/2.))
+        #H_k[7,15]=(dz_dp*Subscript(V,d*p*Pi))/(np.sqrt(2)*np.sqrt(dz_dp**2))
+        #H_k[7,16]=0
+        #H_k[7,17]=0
+        #H_k[7,18]=((np.exp((3*1.j*d1*kx)/2.) + np.exp((1.j*np.sqrt(3)*d1*ky)/2.) + np.exp((1.j*d1*(3*kx + 2*np.sqrt(3)*ky))/2.))*((d1**4 - d1**2*dz_dd**2 + 2*dz_dd**4)*self.m.Vdd_pi_inter + d1**2*((d1**2 + 2*dz_dd**2)*self.m.Vdd_delta_inter + 3*dz_dd**2*self.m.Vdd_sigma_inter)))/(2.*(d1**2 + dz_dd**2)**2*np.exp((1.j*d1*(2*kx + np.sqrt(3)*ky))/2.))
+        #H_k[7,19]=(d1**2*((1 + 1.j*np.sqrt(3))*np.exp((3*1.j*d1*kx)/2.) - 2*np.exp((1.j*np.sqrt(3)*d1*ky)/2.) + (1 - 1.j*np.sqrt(3))*np.exp((1.j*d1*(3*kx + 2*np.sqrt(3)*ky))/2.))*((d1**2 - 3*dz_dd**2)*self.m.Vdd_pi_inter - d1**2*self.m.Vdd_delta_inter + 3*dz_dd**2*self.m.Vdd_sigma_inter))/(4.*(d1**2 + dz_dd**2)**2*np.exp((1.j*d1*(2*kx + np.sqrt(3)*ky))/2.))
+        #H_k[7,20]=(dz_dp*Subscript(V,d*p*Pi))/(np.sqrt(2)*np.sqrt(dz_dp**2))
+        #H_k[7,21]=0
+        #H_k[7,22]=0
+        #H_k[8,12]=(d1**3*dz_dd*(np.exp((3*1.j*d1*kx)/2.) + np.exp((1.j*np.sqrt(3)*d1*ky)/2.) + np.exp((1.j*d1*(3*kx + 2*np.sqrt(3)*ky))/2.))*(4*self.m.Vdd_pi_inter - self.m.Vdd_delta_inter - 3*self.m.Vdd_sigma_inter))/(4.*(d1**2 + dz_dd**2)**2*np.exp((1.j*d1*(2*kx + np.sqrt(3)*ky))/2.))
+        #H_k[8,13]=(np.sqrt(1.5)*d1*dz_dd*((1 + 1.j*np.sqrt(3))*np.exp((3*1.j*d1*kx)/2.) - 2*np.exp((1.j*np.sqrt(3)*d1*ky)/2.) + (1 - 1.j*np.sqrt(3))*np.exp((1.j*d1*(3*kx + 2*np.sqrt(3)*ky))/2.))*(2*(d1 - dz_dd)*(d1 + dz_dd)*self.m.Vdd_pi_inter - d1**2*self.m.Vdd_delta_inter - (d1**2 - 2*dz_dd**2)*self.m.Vdd_sigma_inter))/(4.*(d1**2 + dz_dd**2)**2*np.exp((1.j*d1*(2*kx + np.sqrt(3)*ky))/2.))
+        #H_k[8,14]=(d1*dz_dd*((1 - 1.j*np.sqrt(3))*np.exp((3*1.j*d1*kx)/2.) - 2*np.exp((1.j*np.sqrt(3)*d1*ky)/2.) + (1 + 1.j*np.sqrt(3))*np.exp((1.j*d1*(3*kx + 2*np.sqrt(3)*ky))/2.))*(4*dz_dd**2*self.m.Vdd_pi_inter - (3*d1**2 + 4*dz_dd**2)*self.m.Vdd_delta_inter + 3*d1**2*self.m.Vdd_sigma_inter))/(8.*(d1**2 + dz_dd**2)**2*np.exp((1.j*d1*(2*kx + np.sqrt(3)*ky))/2.))
+        #H_k[8,15]=0
+        #H_k[8,16]=0
+        #H_k[8,17]=(dz_dp*Subscript(V,d*p*Pi))/(np.sqrt(2)*np.sqrt(dz_dp**2))
+        #H_k[8,18]=(d1**2*((1 - 1.j*np.sqrt(3))*np.exp((3*1.j*d1*kx)/2.) - 2*np.exp((1.j*np.sqrt(3)*d1*ky)/2.) + (1 + 1.j*np.sqrt(3))*np.exp((1.j*d1*(3*kx + 2*np.sqrt(3)*ky))/2.))*((d1**2 - 3*dz_dd**2)*self.m.Vdd_pi_inter - d1**2*self.m.Vdd_delta_inter + 3*dz_dd**2*self.m.Vdd_sigma_inter))/(4.*(d1**2 + dz_dd**2)**2*np.exp((1.j*d1*(2*kx + np.sqrt(3)*ky))/2.))
+        #H_k[8,19]=((np.exp((3*1.j*d1*kx)/2.) + np.exp((1.j*np.sqrt(3)*d1*ky)/2.) + np.exp((1.j*d1*(3*kx + 2*np.sqrt(3)*ky))/2.))*((d1**4 - d1**2*dz_dd**2 + 2*dz_dd**4)*self.m.Vdd_pi_inter + d1**2*((d1**2 + 2*dz_dd**2)*self.m.Vdd_delta_inter + 3*dz_dd**2*self.m.Vdd_sigma_inter)))/(2.*(d1**2 + dz_dd**2)**2*np.exp((1.j*d1*(2*kx + np.sqrt(3)*ky))/2.))
+        #H_k[8,20]=0
+        #H_k[8,21]=0
+        #H_k[8,22]=(dz_dp*Subscript(V,d*p*Pi))/(np.sqrt(2)*np.sqrt(dz_dp**2))
+        #H_k[9,12]=0
+        #H_k[9,13]=0
+        #H_k[9,14]=0
+        #H_k[9,15]=-0.25*((1 + np.exp(1.j*np.sqrt(3)*d1*ky) + np.exp((1.j*d1*(3*kx + np.sqrt(3)*ky))/2.))*((d1**2 + 2*dz_pp**2)*self.m.Vpp_pi_inter + d1**2*self.m.Vpp_sigma_inter))/((d1**2 + dz_pp**2)*np.exp((1.j*d1*(kx + np.sqrt(3)*ky))/2.))
+        #H_k[9,16]=(d1*dz_pp*(1 + 1.j*np.sqrt(3) + (1 - 1.j*np.sqrt(3))*np.exp(1.j*np.sqrt(3)*d1*ky) - 2*np.exp((1.j*d1*(3*kx + np.sqrt(3)*ky))/2.))*(self.m.Vpp_pi_inter - self.m.Vpp_sigma_inter))/(4.*np.sqrt(2)*(d1**2 + dz_pp**2)*np.exp((1.j*d1*(kx + np.sqrt(3)*ky))/2.))
+        #H_k[9,17]=(d1**2*(1 - 1.j*np.sqrt(3) + (1 + 1.j*np.sqrt(3))*np.exp(1.j*np.sqrt(3)*d1*ky) - 2*np.exp((1.j*d1*(3*kx + np.sqrt(3)*ky))/2.))*(self.m.Vpp_pi_inter - self.m.Vpp_sigma_inter))/(8.*(d1**2 + dz_pp**2)*np.exp((1.j*d1*(kx + np.sqrt(3)*ky))/2.))
+        #H_k[9,18]=(dz_dp*Subscript(V,d*p*Pi))/(np.sqrt(2)*np.sqrt(dz_dp**2))
+        #H_k[9,19]=0
+        # H_k[9,20]=-0.25*((1 + np.exp(1.j*np.sqrt(3)*d1*ky) + np.exp((1.j*d1*(3*kx + np.sqrt(3)*ky))/2.))*((d1**2 + 2*dz_pp**2)*self.m.Vpp_pi_inter + d1**2*self.m.Vpp_sigma_inter))/((d1**2 + dz_pp**2)*np.exp((1.j*d1*(kx + np.sqrt(3)*ky))/2.))
+        # H_k[9,21]=(d1*dz_pp*(1 + 1.j*np.sqrt(3) + (1 - 1.j*np.sqrt(3))*np.exp(1.j*np.sqrt(3)*d1*ky) - 2*np.exp((1.j*d1*(3*kx + np.sqrt(3)*ky))/2.))*(self.m.Vpp_pi_inter - self.m.Vpp_sigma_inter))/(4.*np.sqrt(2)*(d1**2 + dz_pp**2)*np.exp((1.j*d1*(kx + np.sqrt(3)*ky))/2.))
+        # H_k[9,22]=(d1**2*(1 - 1.j*np.sqrt(3) + (1 + 1.j*np.sqrt(3))*np.exp(1.j*np.sqrt(3)*d1*ky) - 2*np.exp((1.j*d1*(3*kx + np.sqrt(3)*ky))/2.))*(self.m.Vpp_pi_inter - self.m.Vpp_sigma_inter))/(8.*(d1**2 + dz_pp**2)*np.exp((1.j*d1*(kx + np.sqrt(3)*ky))/2.))
+        #H_k[10,12]=0
+        #H_k[10,13]=-((dz_dp*self.m.Vdp_sigma_inter)/(np.sqrt(2)*np.sqrt(dz_dp**2)))
+        #H_k[10,14]=0
+        #H_k[10,15]=(d1*dz_pp*(-1 + 1.j*np.sqrt(3) + (-1 - 1.j*np.sqrt(3))*np.exp(1.j*np.sqrt(3)*d1*ky) + 2*np.exp((1.j*d1*(3*kx + np.sqrt(3)*ky))/2.))*(self.m.Vpp_pi_inter - self.m.Vpp_sigma_inter))/(4.*np.sqrt(2)*(d1**2 + dz_pp**2)*np.exp((1.j*d1*(kx + np.sqrt(3)*ky))/2.))
+        #H_k[10,16]=((1 + np.exp(1.j*np.sqrt(3)*d1*ky) + np.exp((1.j*d1*(3*kx + np.sqrt(3)*ky))/2.))*(d1**2*self.m.Vpp_pi_inter + dz_pp**2*self.m.Vpp_sigma_inter))/(2.*(d1**2 + dz_pp**2)*np.exp((1.j*d1*(kx + np.sqrt(3)*ky))/2.))
+        #H_k[10,17]=(d1*dz_pp*(1 + 1.j*np.sqrt(3) + (1 - 1.j*np.sqrt(3))*np.exp(1.j*np.sqrt(3)*d1*ky) - 2*np.exp((1.j*d1*(3*kx + np.sqrt(3)*ky))/2.))*(self.m.Vpp_pi_inter - self.m.Vpp_sigma_inter))/(4.*np.sqrt(2)*(d1**2 + dz_pp**2)*np.exp((1.j*d1*(kx + np.sqrt(3)*ky))/2.))
+        #H_k[10,18]=0
+        #H_k[10,19]=0
+        # H_k[10,20]=(d1*dz_pp*(-1 + 1.j*np.sqrt(3) + (-1 - 1.j*np.sqrt(3))*np.exp(1.j*np.sqrt(3)*d1*ky) + 2*np.exp((1.j*d1*(3*kx + np.sqrt(3)*ky))/2.))*(self.m.Vpp_pi_inter - self.m.Vpp_sigma_inter))/(4.*np.sqrt(2)*(d1**2 + dz_pp**2)*np.exp((1.j*d1*(kx + np.sqrt(3)*ky))/2.))
+        #PO0-PO0:
+        #H_k[10,21]=((1 + np.exp(1.j*np.sqrt(3)*d1*ky) + np.exp((1.j*d1*(3*kx + np.sqrt(3)*ky))/2.))*(d1**2*self.m.Vpp_pi_inter + dz_pp**2*self.m.Vpp_sigma_inter))/(2.*(d1**2 + dz_pp**2)*np.exp((1.j*d1*(kx + np.sqrt(3)*ky))/2.))
+        # H_k[10,22]=(d1*dz_pp*(1 + 1.j*np.sqrt(3) + (1 - 1.j*np.sqrt(3))*np.exp(1.j*np.sqrt(3)*d1*ky) - 2*np.exp((1.j*d1*(3*kx + np.sqrt(3)*ky))/2.))*(self.m.Vpp_pi_inter - self.m.Vpp_sigma_inter))/(4.*np.sqrt(2)*(d1**2 + dz_pp**2)*np.exp((1.j*d1*(kx + np.sqrt(3)*ky))/2.))
+        #H_k[11,12]=0
+        #H_k[11,13]=0
+        #H_k[11,14]=0
+        #H_k[11,15]=(d1**2*(1 + 1.j*np.sqrt(3) + (1 - 1.j*np.sqrt(3))*np.exp(1.j*np.sqrt(3)*d1*ky) - 2*np.exp((1.j*d1*(3*kx + np.sqrt(3)*ky))/2.))*(self.m.Vpp_pi_inter - self.m.Vpp_sigma_inter))/(8.*(d1**2 + dz_pp**2)*np.exp((1.j*d1*(kx + np.sqrt(3)*ky))/2.))
+        #H_k[11,16]=(d1*dz_pp*(-1 + 1.j*np.sqrt(3) + (-1 - 1.j*np.sqrt(3))*np.exp(1.j*np.sqrt(3)*d1*ky) + 2*np.exp((1.j*d1*(3*kx + np.sqrt(3)*ky))/2.))*(self.m.Vpp_pi_inter - self.m.Vpp_sigma_inter))/(4.*np.sqrt(2)*(d1**2 + dz_pp**2)*np.exp((1.j*d1*(kx + np.sqrt(3)*ky))/2.))
+        #H_k[11,17]=-0.25*((1 + np.exp(1.j*np.sqrt(3)*d1*ky) + np.exp((1.j*d1*(3*kx + np.sqrt(3)*ky))/2.))*((d1**2 + 2*dz_pp**2)*self.m.Vpp_pi_inter + d1**2*self.m.Vpp_sigma_inter))/((d1**2 + dz_pp**2)*np.exp((1.j*d1*(kx + np.sqrt(3)*ky))/2.))
+        #H_k[11,18]=0
+        #H_k[11,19]=(dz_dp*Subscript(V,d*p*Pi))/(np.sqrt(2)*np.sqrt(dz_dp**2))
+        # H_k[11,20]=(d1**2*(1 + 1.j*np.sqrt(3) + (1 - 1.j*np.sqrt(3))*np.exp(1.j*np.sqrt(3)*d1*ky) - 2*np.exp((1.j*d1*(3*kx + np.sqrt(3)*ky))/2.))*(self.m.Vpp_pi_inter - self.m.Vpp_sigma_inter))/(8.*(d1**2 + dz_pp**2)*np.exp((1.j*d1*(kx + np.sqrt(3)*ky))/2.))
+        # H_k[11,21]=(d1*dz_pp*(-1 + 1.j*np.sqrt(3) + (-1 - 1.j*np.sqrt(3))*np.exp(1.j*np.sqrt(3)*d1*ky) + 2*np.exp((1.j*d1*(3*kx + np.sqrt(3)*ky))/2.))*(self.m.Vpp_pi_inter - self.m.Vpp_sigma_inter))/(4.*np.sqrt(2)*(d1**2 + dz_pp**2)*np.exp((1.j*d1*(kx + np.sqrt(3)*ky))/2.))
+        # H_k[11,22]=-0.25*((1 + np.exp(1.j*np.sqrt(3)*d1*ky) + np.exp((1.j*d1*(3*kx + np.sqrt(3)*ky))/2.))*((d1**2 + 2*dz_pp**2)*self.m.Vpp_pi_inter + d1**2*self.m.Vpp_sigma_inter))/((d1**2 + dz_pp**2)*np.exp((1.j*d1*(kx + np.sqrt(3)*ky))/2.))
+        # ------------------------------------------------
         # SOC
         H_k[23:45,23:45] = H_k[1:23,1:23]
         # spin1
@@ -758,7 +918,7 @@ class BandModel:
         """
         H_kk = H_k[1:,1:]
         H_kk += np.conjugate(np.triu(H_kk, k=1)).T
-        np.fill_diagonal(H_kk, H_kk.diagonal() + self.m.offset)
+        #np.fill_diagonal(H_kk, H_kk.diagonal() + self.m.offset)
         return H_kk
 
 
@@ -938,9 +1098,10 @@ class Plotting:
         """
         pointsize = .5
         fig, ax = plt.subplots(figsize=(8, 6))
-        ax.axes.set_aspect(.1)
+        ax.axes.set_aspect(.2)
         ax.set_xlabel('k (nm$^{-1}$)')
         ax.set_ylabel('E (eV)')
+        ax.set_ylim([-2.,3.])
 
         k_path = np.linspace(0., 1., num=self.grid_k.shape[0])
         # plot dispersion relation
@@ -965,7 +1126,7 @@ class Plotting:
              ax.annotate(name, xy=(position_k-text_shift_x, plot_max_y), xytext=(position_k-text_shift_x, plot_max_y + 0.1))
              ax.axvline(x=position_k, linestyle='--', color='black')
         filename = f'{plot_name}.png'
-        plt.savefig(os.path.join(self.directory, "plots", filename), bbox_inches='tight', dpi=400)
+        plt.savefig(os.path.join(self.directory, filename), bbox_inches='tight', dpi=400)
         plt.close()
         
     

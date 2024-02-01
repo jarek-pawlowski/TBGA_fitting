@@ -2,6 +2,7 @@ import utils_evo
 import utils_tb
 import datetime
 from numpy.random import uniform
+import numpy as np
 
 lattice_const = 3.323
 # --- Slater-Koster layers parameters
@@ -43,11 +44,12 @@ Vpp_pi_inter    = -0.5  # negative
 Vdd_sigma_inter = -0.3  # negative
 Vdd_pi_inter    =  0.3  # positive
 Vdd_delta_inter = -0.6  # negative
+Vdp_sigma_inter =  0.0
 
 material = utils_tb.Newmaterial(lattice_const,
                     Ed_up,Ep1_up,Ep0_up,Vdp_sigma_up,Vdp_pi_up,Vdd_sigma_up,Vdd_pi_up,Vdd_delta_up,Vpp_sigma_up,Vpp_pi_up,Ep1_odd_up,Ep0_odd_up,Ed_odd_up,lambda_M_up,lambda_X2_up,
                     Ed_down,Ep1_down,Ep0_down,Vdp_sigma_down,Vdp_pi_down,Vdd_sigma_down,Vdd_pi_down,Vdd_delta_down,Vpp_sigma_down,Vpp_pi_down,Ep1_odd_down,Ep0_odd_down,Ed_odd_down,lambda_M_down,lambda_X2_down,
-                    Vpp_sigma_inter,Vpp_pi_inter,Vdd_sigma_inter,Vdd_pi_inter,Vdd_delta_inter, 0.)
+                    Vpp_sigma_inter,Vpp_pi_inter,Vdd_sigma_inter,Vdd_pi_inter,Vdd_delta_inter, Vdp_sigma_inter)
 
 k_path = utils_tb.load_k_path('kpointsDFT.dat')
 lattice = utils_tb.Lattice(BZ_path=k_path)
@@ -65,24 +67,29 @@ evo_search = utils_evo.EvoSearch(
     eigen_solver=eigen_solver,
     real_bands=real_bands,
     real_spins=real_spins,
-    bounds=[2.,],
+    bounds=[1.,2.],
     bands=["coductance_and_valence", "coductance_and_valence_reduced"],
     compostition_loss=[.5],  #[.5, .2, .1],
-    inter_intra_ratio_bounds=[0.09,0.07,0.05],
+    inter_intra_ratio_bounds=[0.09, 0.07, 0.11],
     strategy=["best1bin","best1exp",],
-    pop_size=[503],  # 500
+    pop_size=[512],  # 500
     tol=0.0001,
     mutation=[(0.05, 0.15)],
     recombination=[.6,],  # .7 | seems like >0.7 is doing worse
     metrics=["rmse"],
-    max_iter=1000,
+    max_iter=500,
     workers=8,  # -1 = all cores
     no_params=[26,6],
-    results_path=f'./results/results_{datetime.datetime.now().strftime("%Y%m%d-%H%M")}.txt',
-    plots_path=None
+    results_path=f'./results1/results_{datetime.datetime.now().strftime("%Y%m%d-%H%M")}.txt',
+    plots_path="plots1"
 )
 
 #print(evo_search._calculate_residuals([0.5303333767767483, 1.1139367006174299, -0.22029626391997187, 0.63512133230208, 0.2357301545544615, 0.2965495264896972, -0.1176609724634411, -0.15780539528891308, -0.14252978069227137, -0.25214770221155436, 1.2997392133678685, -3.1852554573522593], "coductance_and_valence", "rmse" ))
 #print(evo_search._calculate_residuals([-0.5652248235471982, -1.0230287615236027, -0.004144542454125683, 0.2436480099993278, 0.17519028277983584, 0.5512095930801296, -0.12507917536939017, 0.005127585989217813, -0.3688908301602572, -0.2977195613062045, 1.7874994849771866, -2.3006786044193563], "coductance_and_valence", "rmse" ))
+
+parameters = np.array([-5.958861367832076E-002, -5.07768325945268, -5.43985445526999, -2.97645201029034, 1.17511473252137, -0.922807897798853, 0.750973146639994, 0.225037241142981, 1.39651734399144, -0.467650293769481, -5.21767471324313, -5.41764380468383, -0.199555140694319, 
+                       1.964628549120861E-002, -4.18873315173927, -4.65965675237117, -3.26206262926160, 1.02005879779360, -1.22320015408732, 0.859943808292926, 0.238166335526434, 1.07920220903483, -0.365781776466343, -4.32873315150264, -4.79923284334735, -0.120167757070417,
+                       0., 0., 0., 0., 0., 0.])
+material.set_parameters(*parameters)
 
 evo_search.search_for_best()

@@ -7,7 +7,7 @@ outputs/
 *.png
 __init__.py
 results*
-plots/
+plots*
 test_plots/
 tags/
 *.npy
