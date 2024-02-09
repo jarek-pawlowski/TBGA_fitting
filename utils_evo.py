@@ -54,7 +54,7 @@ class SlicedBands:
             return self
         if self.bands == "coductance_and_valence_reduced":
             self.real_bands = self.real_bands[:, 9:13]
-            self.predicted_bands = self.predicted_bands[:, 15:19]
+            self.predicted_bands = self.predicted_bands[:, 15:19]  # [15:19]
             return self
         if self.bands == "valence":
             self.real_bands = self.real_bands[:, 7:11]
@@ -179,7 +179,7 @@ class EvoSearch:
         for ks_idx in self.ks_indices:
             _, spins, comps = self.eigen_solver.solve_k(self.eigen_solver.model.BZ_path[ks_idx], get_spin=True)
             #spin_err += sqrt(mean_squared_error(self.real_spins[ks_idx,7:15], spins[13:21]))
-            spin_err += sqrt(mean_squared_error(self.real_spins[ks_idx,9:13], spins[15:19]))
+            spin_err += sqrt(mean_squared_error(self.real_spins[ks_idx,9:13], spins[15:19]))*compostition_loss
             # to be implemented:
             #comp_err += 1. if np.sum(np.array([comps[0,4]+comps[2,4], comps[1,5], comps[1,6], comps[0,7]+comps[2,7]]) - np.array([1., 1., 1., 1.])*compostition_loss) < 0. else 0.
         if metric == "rmse":
