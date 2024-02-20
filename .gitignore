@@ -5,6 +5,8 @@ venv/
 old/
 outputs/
 *.png
+!test_full/fit.png
+!test_min/fit.png
 __init__.py
 results*
 plots*
