@@ -94,6 +94,7 @@ np.savetxt("./test_min/parameter_names.txt", names, fmt="%s")
 np.savetxt("./test_min/parameter_values.txt", values)
 np.savetxt("./test_min/E_k.txt", fitted_bands)
 np.savetxt("./test_min/S_k.txt", fitted_spins)
+np.savetxt("./test_min/k_path.txt", k_path)
 
 fits = []
 for mul in np.linspace(0.9, 1.1, num=6, endpoint=True):
