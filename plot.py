@@ -42,16 +42,17 @@ Vdd_sigma_inter = -0.3  # negative
 Vdd_pi_inter    =  0.3  # positive
 Vdd_delta_inter = -0.6  # negative
 Vdp_sigma_inter =  0.0
+Vpd_sigma_inter =  0.0 
 
 material = utils_tb.Newmaterial(lattice_const,
                     Ed_up,Ep1_up,Ep0_up,Vdp_sigma_up,Vdp_pi_up,Vdd_sigma_up,Vdd_pi_up,Vdd_delta_up,Vpp_sigma_up,Vpp_pi_up,Ep1_odd_up,Ep0_odd_up,Ed_odd_up,lambda_M_up,lambda_X2_up,
                     Ed_down,Ep1_down,Ep0_down,Vdp_sigma_down,Vdp_pi_down,Vdd_sigma_down,Vdd_pi_down,Vdd_delta_down,Vpp_sigma_down,Vpp_pi_down,Ep1_odd_down,Ep0_odd_down,Ed_odd_down,lambda_M_down,lambda_X2_down,
-                    Vpp_sigma_inter,Vpp_pi_inter,Vdd_sigma_inter,Vdd_pi_inter,Vdd_delta_inter, Vdp_sigma_inter)
+                    Vpp_sigma_inter,Vpp_pi_inter,Vdd_sigma_inter,Vdd_pi_inter,Vdd_delta_inter, Vdp_sigma_inter, Vpd_sigma_inter)
 
 k_path = utils_tb.load_k_path('kpointsDFT.dat')
 lattice = utils_tb.Lattice(BZ_path=k_path)
 lattice.select_k_indices(distance=4)
-model = utils_tb.BandModel(material, lattice, interlayer_type='minimal')
+model = utils_tb.BandModel(material, lattice, interlayer_type='experimental')
 eigen_solver = utils_tb.EigenSolver(model)
 plotting = utils_tb.Plotting(eigen_solver.model, directory='./plots1')
 #real_bands = utils_tb.load_data_tomek('./even_DFT.txt')[:, ::-1]
@@ -67,7 +68,7 @@ real_bands += 1.897  # VB max to zero
 # for min H
 parameters0 = np.array([-5.958861367832076E-002, -5.07768325945268, -5.43985445526999, -2.97645201029034, 1.17511473252137, -0.922807897798853, 0.750973146639994, 0.225037241142981, 1.39651734399144, -0.467650293769481, -5.21767471324313, -5.41764380468383, -0.199555140694319,     
                         1.964628549120861E-002, -4.18873315173927, -4.65965675237117, -3.26206262926160, 1.02005879779360, -1.22320015408732, 0.859943808292926, 0.238166335526434, 1.07920220903483, -0.365781776466343, -4.32873315150264, -4.79923284334735, -0.120167757070417, 
-                       -1.10061550263889, -0.154678549691682, -0.500000000000000, 1.83181876021877, -0.329984241003078, 0.])
+                       -1.10061550263889, -0.154678549691682, -0.500000000000000, 1.83181876021877, -0.329984241003078, 0., 0.])
 parameters = parameters0
 offset = -0.23
 parameters[0:3] += offset
@@ -79,22 +80,23 @@ material.set_parameters(*parameters)
 # # for full H
 # parameters1 = np.array([-0.13999990158662173, -0.13992943903034172, 0.02448281933930007, 0.12804977302666018, 0.01832327244847928, -0.052049976646124124, 0.09244506390462301, 0.07692014974378829, -0.10403128890842239, -0.042490894317454335, -0.13999312461274271, -0.007794646634149272, -0.1399887364929085, 
 #                        0.015241982043966276, -0.13967883400834263, -0.1399985716496038, 0.139408303218868, -0.1399999143025165, -0.13993517468089728, 0.13998155855542338, 0.1119197427747458, -0.1399824352447426, -0.07955981617577, -0.13989700818011763, -0.05700372798810056, -0.13999985207532115, 
-#                        -0.4253565273584265, 0.9623219115990058, 0.2537392835657552, -0.38290181750608504, 0.2526624632846509, -0.05718898903886564])
-# parameters2 = np.array([-0.24998755827572447, -0.17005314428091503, -0.022919821025013193, 0.2104831697932253, 0.17466364449464572, -0.09354299555441778, -0.00914801256882744, 0.15135245018185967, 0.006216498983297014, 0.03826851846383894, -0.0724397359513074, -0.249695612098196, -0.24883397651837594, 
-#                        -0.04289658669470314, 0.062283559164763524, -0.14943193100982877, 0.04854128866309959, -0.24958568156502298, -0.07757581053010329, 0.24949296795927373, -0.06256542749566582, -0.1898572454900231, -0.10157010536962033, -0.24967265695393462, -0.2499078340659163, -0.24999523407767876, 
-#                        0.00021367075437650485, 0.5084574455873137, -0.013432654045392733, 0.01495566922888214, 0.18059766998185123, -0.07819324737746769])
-# parameters = parameters2
-# material.update_parameters(*parameters)
+#                        -0.4253565273584265, 0.9623219115990058, 0.2537392835657552, -0.38290181750608504, 0.2526624632846509, -0.05718898903886564, -0.05718898903886564])
+parameters2 = np.array([-0.24998755827572447, -0.17005314428091503, -0.022919821025013193, 0.2104831697932253, 0.17466364449464572, -0.09354299555441778, -0.00914801256882744, 0.15135245018185967, 0.006216498983297014, 0.03826851846383894, -0.0724397359513074, -0.249695612098196, -0.24883397651837594, 
+                       -0.04289658669470314, 0.062283559164763524, -0.14943193100982877, 0.04854128866309959, -0.24958568156502298, -0.07757581053010329, 0.24949296795927373, -0.06256542749566582, -0.1898572454900231, -0.10157010536962033, -0.24967265695393462, -0.2499078340659163, -0.24999523407767876, 
+                       0.00021367075437650485, 0.5084574455873137, -0.013432654045392733, 0.01495566922888214, 0.18059766998185123, -0.07819324737746769, -0.07819324737746769])
+parameters = parameters2
+material.update_parameters(*parameters)
 
 fitted_bands, fitted_spins, _ = eigen_solver.solve_BZ_path(get_spin=True)
 real_spins = np.ones_like(fitted_spins)
 plotting.plot_Ek_output_target_s([real_bands, real_spins], [fitted_bands, fitted_spins], "fit")
+
 names, values = material.get_parameters()
-np.savetxt("./test_min/parameter_names.txt", names, fmt="%s")
-np.savetxt("./test_min/parameter_values.txt", values)
-np.savetxt("./test_min/E_k.txt", fitted_bands)
-np.savetxt("./test_min/S_k.txt", fitted_spins)
-np.savetxt("./test_min/k_path.txt", k_path)
+np.savetxt("./test_full/parameter_names.txt", names, fmt="%s")
+np.savetxt("./test_full/parameter_values.txt", values)
+np.savetxt("./test_full/E_k.txt", fitted_bands)
+np.savetxt("./test_full/S_k.txt", fitted_spins)
+np.savetxt("./test_full/k_path.txt", k_path)
 
 fits = []
 for mul in np.linspace(0.9, 1.1, num=6, endpoint=True):

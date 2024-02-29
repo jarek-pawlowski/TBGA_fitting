@@ -45,11 +45,12 @@ Vdd_sigma_inter = -0.3  # negative
 Vdd_pi_inter    =  0.3  # positive
 Vdd_delta_inter = -0.6  # negative
 Vdp_sigma_inter =  0.0
+Vpd_sigma_inter =  0.0
 
 material = utils_tb.Newmaterial(lattice_const,
                     Ed_up,Ep1_up,Ep0_up,Vdp_sigma_up,Vdp_pi_up,Vdd_sigma_up,Vdd_pi_up,Vdd_delta_up,Vpp_sigma_up,Vpp_pi_up,Ep1_odd_up,Ep0_odd_up,Ed_odd_up,lambda_M_up,lambda_X2_up,
                     Ed_down,Ep1_down,Ep0_down,Vdp_sigma_down,Vdp_pi_down,Vdd_sigma_down,Vdd_pi_down,Vdd_delta_down,Vpp_sigma_down,Vpp_pi_down,Ep1_odd_down,Ep0_odd_down,Ed_odd_down,lambda_M_down,lambda_X2_down,
-                    Vpp_sigma_inter,Vpp_pi_inter,Vdd_sigma_inter,Vdd_pi_inter,Vdd_delta_inter, Vdp_sigma_inter)
+                    Vpp_sigma_inter,Vpp_pi_inter,Vdd_sigma_inter,Vdd_pi_inter,Vdd_delta_inter, Vdp_sigma_inter, Vpd_sigma_inter)
 
 k_path = utils_tb.load_k_path('kpointsDFT.dat')
 lattice = utils_tb.Lattice(BZ_path=k_path)
@@ -72,14 +73,14 @@ evo_search = utils_evo.EvoSearch(
     compostition_loss=[.5, .2],
     inter_intra_ratio_bounds=[0.05, 0.07, 0.09],
     strategy=["best1bin","best1exp",],
-    pop_size=[521],  # 500
+    pop_size=[522],  # 500
     tol=0.0001,
     mutation=[(0.05, 0.15)],
     recombination=[.6,],  # .7 | seems like >0.7 is doing worse
     metrics=["rmse"],
     max_iter=500,
     workers=8,  # -1 = all cores
-    no_params=[26,6],
+    no_params=[26,7],
     results_path=f'./results1/results_{datetime.datetime.now().strftime("%Y%m%d-%H%M")}.txt',
     plots_path="plots1"
 )
@@ -94,9 +95,15 @@ parameters = np.array([-5.958861367832076E-002, -5.07768325945268, -5.4398544552
 # from Kasia
 parameters = np.array([-5.958861367832076E-002, -5.07768325945268, -5.43985445526999, -2.97645201029034, 1.17511473252137, -0.922807897798853, 0.750973146639994, 0.225037241142981, 1.39651734399144, -0.467650293769481, -5.21767471324313, -5.41764380468383, -0.199555140694319,     
                         1.964628549120861E-002, -4.18873315173927, -4.65965675237117, -3.26206262926160, 1.02005879779360, -1.22320015408732, 0.859943808292926, 0.238166335526434, 1.07920220903483, -0.365781776466343, -4.32873315150264, -4.79923284334735, -0.120167757070417, 
-                       -1.10061550263889, -0.154678549691682, -0.500000000000000, 1.83181876021877, -0.329984241003078, 0.])
+                       -1.10061550263889, -0.154678549691682, -0.500000000000000, 1.83181876021877, -0.329984241003078, 0., 0.])
 
 material.set_parameters(*parameters)
+
+parameters2 = np.array([-0.24998755827572447, -0.17005314428091503, -0.022919821025013193, 0.2104831697932253, 0.17466364449464572, -0.09354299555441778, -0.00914801256882744, 0.15135245018185967, 0.006216498983297014, 0.03826851846383894, -0.0724397359513074, -0.249695612098196, -0.24883397651837594, 
+                       -0.04289658669470314, 0.062283559164763524, -0.14943193100982877, 0.04854128866309959, -0.24958568156502298, -0.07757581053010329, 0.24949296795927373, -0.06256542749566582, -0.1898572454900231, -0.10157010536962033, -0.24967265695393462, -0.2499078340659163, -0.24999523407767876, 
+                       0.00021367075437650485, 0.5084574455873137, -0.013432654045392733, 0.01495566922888214, 0.18059766998185123, -0.07819324737746769, -0.07819324737746769])
+parameters = parameters2
+material.update_parameters(*parameters)
 
 # parameters = np.array([-0.09983598013125389, 0.04654703317547791, 0.09999176727770528, 0.08980310914053277, 0.054209020059768374, -0.07583695391399352, 0.08795713489725772, 0.09954923118056039, 0.09999520819063411, 0.06420849123419707, -0.09998993502045736, -0.09999275121501275, -0.09999744776075556, 
 #                        -0.09999946263609742, -0.011012367063698472, -0.09977497067888252, 0.09999203489059871, -0.09999599084089607, -0.02450668782266034, 0.099999594497945, 0.01696419885310237, 0.09999901225285218, 0.09997243730346958, -0.03773067293983372, 0.012537944739452755, -0.09987616291611341, 
