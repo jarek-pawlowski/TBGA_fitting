@@ -55,7 +55,7 @@ material = utils_tb.Newmaterial(lattice_const,
 k_path = utils_tb.load_k_path('kpointsDFT.dat')
 lattice = utils_tb.Lattice(BZ_path=k_path)
 lattice.select_k_indices(distance=4)
-model = utils_tb.BandModel(material, lattice, interlayer_type='experimental')
+model = utils_tb.BandModel(material, lattice, interlayer_type='full')
 eigen_solver = utils_tb.EigenSolver(model)
 #real_bands = utils_tb.load_data_tomek('./even_DFT.txt')[:, ::-1]
 real_bands, real_spins = utils_tb.load_data_kasia('./ElectronicStructureInfo.dat')
