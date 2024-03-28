@@ -31,3 +31,5 @@ Vdd_pi_inter
 Vdd_delta_inter
 Vdp_sigma_inter
 Vpd_sigma_inter
+Vdp_pi_inter
+Vpd_pi_inter

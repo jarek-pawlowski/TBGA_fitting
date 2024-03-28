@@ -43,11 +43,13 @@ Vdd_pi_inter    =  0.3  # positive
 Vdd_delta_inter = -0.6  # negative
 Vdp_sigma_inter =  0.0
 Vpd_sigma_inter =  0.0 
+Vdp_pi_inter =  0.0
+Vpd_pi_inter =  0.0 
 
 material = utils_tb.Newmaterial(lattice_const,
                     Ed_up,Ep1_up,Ep0_up,Vdp_sigma_up,Vdp_pi_up,Vdd_sigma_up,Vdd_pi_up,Vdd_delta_up,Vpp_sigma_up,Vpp_pi_up,Ep1_odd_up,Ep0_odd_up,Ed_odd_up,lambda_M_up,lambda_X2_up,
                     Ed_down,Ep1_down,Ep0_down,Vdp_sigma_down,Vdp_pi_down,Vdd_sigma_down,Vdd_pi_down,Vdd_delta_down,Vpp_sigma_down,Vpp_pi_down,Ep1_odd_down,Ep0_odd_down,Ed_odd_down,lambda_M_down,lambda_X2_down,
-                    Vpp_sigma_inter,Vpp_pi_inter,Vdd_sigma_inter,Vdd_pi_inter,Vdd_delta_inter, Vdp_sigma_inter, Vpd_sigma_inter)
+                    Vpp_sigma_inter,Vpp_pi_inter,Vdd_sigma_inter,Vdd_pi_inter,Vdd_delta_inter,Vdp_sigma_inter,Vpd_sigma_inter,Vdp_pi_inter,Vpd_pi_inter)
 
 k_path = utils_tb.load_k_path('kpointsDFT.dat')
 lattice = utils_tb.Lattice(BZ_path=k_path)
@@ -68,13 +70,13 @@ real_bands += 1.897  # VB max to zero
 # for min H
 parameters0 = np.array([-5.958861367832076E-002, -5.07768325945268, -5.43985445526999, -2.97645201029034, 1.17511473252137, -0.922807897798853, 0.750973146639994, 0.225037241142981, 1.39651734399144, -0.467650293769481, -5.21767471324313, -5.41764380468383, -0.199555140694319,     
                         1.964628549120861E-002, -4.18873315173927, -4.65965675237117, -3.26206262926160, 1.02005879779360, -1.22320015408732, 0.859943808292926, 0.238166335526434, 1.07920220903483, -0.365781776466343, -4.32873315150264, -4.79923284334735, -0.120167757070417, 
-                       -1.10061550263889, -0.154678549691682, -0.500000000000000, 1.83181876021877, -0.329984241003078, 0., 0.])
+                       -1.10061550263889, -0.154678549691682, -0.500000000000000, 1.83181876021877, -0.329984241003078, 0., 0., 0., 0.])
 parameters = parameters0
-offset = -0.23
-parameters[0:3] += offset
-parameters[10:13] += offset
-parameters[0+13:3+13] += offset
-parameters[10+13:13+13] += offset
+# offset = -0.23
+# parameters[0:3] += offset
+# parameters[10:13] += offset
+# parameters[0+13:3+13] += offset
+# parameters[10+13:13+13] += offset
 material.set_parameters(*parameters)
 
 # # for full H
@@ -86,7 +88,7 @@ parameters2 = np.array([-0.24998755827572447, -0.17005314428091503, -0.022919821
                        0.00021367075437650485, 0.5084574455873137, -0.013432654045392733, 0.01495566922888214, 0.18059766998185123, -0.07819324737746769, -0.07819324737746769])
 parameters3 = np.array([-0.15493188598183077, -0.3113018142349407, -0.3449577434119868, -0.055588726284811096, 0.06738249670479253, -0.12268328572564377, 0.02602346316095907, 0.10803095281684617, 0.073524181547666, -0.16094504210698546, 0.35000000000000003, -0.27935685686836986, -0.34622722136916023, 
                         -0.004427673731247748, -0.18701763825175446, -0.33762050385915177, -0.34759524133482544, -0.18307330044708792, -0.2847852418052469, 0.2576966809702061, 0.18338211911210622, -0.12092407825567782, -0.20101866686727873, -0.2560917865327248, 0.1827428559052594, 0.35000000000000003, 
-                        -0.1735021245254963, -0.5467213710463635, -0.08409085640010597, 0.8378024221220352, -0.1592192149658504, -0.3036848282973871, 0.5577327508195902])
+                        -0.1735021245254963, -0.5467213710463635, -0.08409085640010597, 0.8378024221220352, -0.1592192149658504, -0.3036848282973871, 0.5577327508195902, 0., 0.])
 parameters = parameters3
 material.update_parameters(*parameters)
 

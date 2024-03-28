@@ -46,11 +46,13 @@ Vdd_pi_inter    =  0.3  # positive
 Vdd_delta_inter = -0.6  # negative
 Vdp_sigma_inter =  0.0
 Vpd_sigma_inter =  0.0
+Vdp_pi_inter =  0.0
+Vpd_pi_inter =  0.0 
 
 material = utils_tb.Newmaterial(lattice_const,
                     Ed_up,Ep1_up,Ep0_up,Vdp_sigma_up,Vdp_pi_up,Vdd_sigma_up,Vdd_pi_up,Vdd_delta_up,Vpp_sigma_up,Vpp_pi_up,Ep1_odd_up,Ep0_odd_up,Ed_odd_up,lambda_M_up,lambda_X2_up,
                     Ed_down,Ep1_down,Ep0_down,Vdp_sigma_down,Vdp_pi_down,Vdd_sigma_down,Vdd_pi_down,Vdd_delta_down,Vpp_sigma_down,Vpp_pi_down,Ep1_odd_down,Ep0_odd_down,Ed_odd_down,lambda_M_down,lambda_X2_down,
-                    Vpp_sigma_inter,Vpp_pi_inter,Vdd_sigma_inter,Vdd_pi_inter,Vdd_delta_inter, Vdp_sigma_inter, Vpd_sigma_inter)
+                    Vpp_sigma_inter,Vpp_pi_inter,Vdd_sigma_inter,Vdd_pi_inter,Vdd_delta_inter,Vdp_sigma_inter,Vpd_sigma_inter,Vdp_pi_inter,Vpd_pi_inter)
 
 k_path = utils_tb.load_k_path('kpointsDFT.dat')
 lattice = utils_tb.Lattice(BZ_path=k_path)
@@ -80,7 +82,7 @@ evo_search = utils_evo.EvoSearch(
     metrics=["rmse"],
     max_iter=500,
     workers=8,  # -1 = all cores
-    no_params=[26,7],
+    no_params=[26,9],
     results_path=f'./results1/results_{datetime.datetime.now().strftime("%Y%m%d-%H%M")}.txt',
     plots_path="plots1"
 )
