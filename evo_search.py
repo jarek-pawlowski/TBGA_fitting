@@ -57,7 +57,7 @@ material = utils_tb.Newmaterial(lattice_const,
 k_path = utils_tb.load_k_path('kpointsDFT.dat')
 lattice = utils_tb.Lattice(BZ_path=k_path)
 lattice.select_k_indices(distance=4)
-model = utils_tb.BandModel(material, lattice, interlayer_type='full')
+model = utils_tb.BandModel(material, lattice, interlayer_type='minimal')
 eigen_solver = utils_tb.EigenSolver(model)
 #real_bands = utils_tb.load_data_tomek('./even_DFT.txt')[:, ::-1]
 real_bands, real_spins = utils_tb.load_data_kasia('./ElectronicStructureInfo.dat')
@@ -75,7 +75,7 @@ evo_search = utils_evo.EvoSearch(
     compostition_loss=[.5, .2],
     inter_intra_ratio_bounds=[0.05, 0.07, 0.09],
     strategy=["best1bin","best1exp",],
-    pop_size=[533],  # 500
+    pop_size=[534],  # 500
     tol=0.0001,
     mutation=[(0.05, 0.15)],
     recombination=[.6,],  # .7 | seems like >0.7 is doing worse

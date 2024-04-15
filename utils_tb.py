@@ -318,6 +318,10 @@ class Newmaterial:
                            self.Ed_down,self.Ep1_down,self.Ep0_down,self.Vdp_sigma_down,self.Vdp_pi_down,self.Vdd_sigma_down,self.Vdd_pi_down,self.Vdd_delta_down,self.Vpp_sigma_down,self.Vpp_pi_down,self.Ep1_odd_down,self.Ep0_odd_down,self.Ed_odd_down,
                            self.Vpp_sigma_inter,self.Vpp_pi_inter,self.Vdd_sigma_inter,self.Vdd_pi_inter,self.Vdd_delta_inter,self.Vdp_sigma_inter,self.Vpd_sigma_inter,self.Vdp_pi_inter,self.Vpd_pi_inter])
         return names, values
+    
+    def set_soi(self, lambda_X2):
+        self.lambda_X2_up = lambda_X2
+        self.lambda_X2_down = lambda_X2
         
 
 class Lattice:
