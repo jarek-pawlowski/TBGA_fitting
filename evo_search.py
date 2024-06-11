@@ -37,7 +37,7 @@ Ep1_odd_down   =  Ep1_down
 Ep0_odd_down   =  Ep0_down
 Ed_odd_down    =  Ed_down 
 lambda_M_down  =  0.472/2.  # 0.35  # it should be: 0.472d0/2.0d0
-lambda_X2_down =  0.200/2. # -0.390/2.  # -0.20  # it should be: -0.390d0/2.0d0
+lambda_X2_down =  -0.390/2.  # -0.20  # it should be: -0.390d0/2.0d0
 # interlayer
 Vpp_sigma_inter =  0.5  # positive
 Vpp_pi_inter    = -0.5  # negative
